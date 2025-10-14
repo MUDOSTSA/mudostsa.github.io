@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambayan - MUDOSTSA</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      .material-icons {
+        font-family: "Material Icons";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        vertical-align: middle;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --navy-blue: #0a1929;
+        --dark-blue: #132f4c;
+        --medium-blue: #1e4976;
+        --accent-yellow: #ffd700;
+        --light-yellow: #ffe44d;
+        --border-color: rgba(255, 215, 0, 0.2);
+        --text-light: #e3f2fd;
+        --text-muted: #b0bec5;
+      }
+
+      body {
+        font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--navy-blue) 0%,
+          var(--dark-blue) 100%
+        );
+        color: var(--text-light);
+        min-height: 100vh;
+      }
+
+      /* Navigation Bar */
+      nav {
+        background: rgba(19, 47, 76, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        margin: 20px;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 20px;
+        z-index: 1000;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .nav-brand img {
+        height: 45px;
+        width: 45px;
+        object-fit: contain;
+      }
+
+      .nav-brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-brand-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        letter-spacing: 1px;
+        line-height: 1;
+      }
+
+      .nav-brand-subtitle {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+        line-height: 1;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--border-color);
+        color: var(--accent-yellow);
+      }
+
+      .nav-links a.active {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border-color: var(--accent-yellow);
+      }
+
+      /* Main Content */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        min-height: calc(100vh - 200px);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent-yellow);
+        margin-top: 20px;
+        margin-bottom: 40px;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        font-size: 2.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .campus-sections {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+        margin-top: 20px;
+      }
+
+      .campus-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .campus-title {
+        text-align: center;
+        color: var(--accent-yellow);
+        font-size: 1.6em;
+        font-weight: 600;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Active Room Indicator */
+      .active-room-indicator {
+        width: 600px;
+        background: rgba(30, 73, 118, 0.6);
+        border: 1px solid var(--accent-yellow);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 40px;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+        text-align: center;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .active-room-indicator.no-active {
+        background: rgba(19, 47, 76, 0.6);
+        border: 1px solid var(--border-color);
+        box-shadow: none;
+      }
+
+      .active-room-indicator h2 {
+        color: var(--accent-yellow);
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+      }
+
+      .active-room-indicator.no-active h2 {
+        color: var(--text-muted);
+      }
+
+      .active-room-name {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--accent-yellow);
+        margin-bottom: 16px;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      }
+
+      .active-room-info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        color: var(--text-light);
+        font-size: 1.1rem;
+      }
+
+      .active-room-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .no-active-message {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        font-style: italic;
+      }
+
+      /* Tambayan Timeline */
+      .timeline {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+      }
+
+      /* Timeline Line */
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          var(--border-color) 10%,
+          var(--accent-yellow) 45%,
+          var(--accent-yellow) 55%,
+          var(--border-color) 90%,
+          transparent
+        );
+        z-index: 1;
+      }
+
+      .room-card {
+        background: rgba(19, 47, 76, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 24px;
+        padding-left: 60px;
+        margin-left: 40px;
+        transition: all 0.3s ease;
+        position: relative;
+        opacity: 0.7;
+        transform: scale(0.95);
+        z-index: 2;
+      }
+
+      .room-card.past {
+        order: 1;
+      }
+
+      .room-card.current {
+        order: 2;
+        opacity: 1;
+        transform: scale(1.05);
+        background: rgba(30, 73, 118, 0.6);
+        border: 1px solid var(--accent-yellow);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+        z-index: 10;
+      }
+
+      .room-card.future {
+        order: 3;
+      }
+
+      .room-card::before {
+        content: "";
+        position: absolute;
+        left: -28px;
+        width: 16px;
+        height: 16px;
+        background: var(--border-color);
+        border-radius: 50%;
+        top: 50%;
+        margin-top: -8px;
+        border: 3px solid var(--dark-blue);
+        z-index: 5;
+      }
+
+      .room-card.current::before {
+        background: var(--accent-yellow);
+        width: 20px;
+        height: 20px;
+        left: -30px;
+        margin-top: -10px;
+        border: 3px solid var(--dark-blue);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        animation: pulse 2s ease-in-out infinite;
+        z-index: 5;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translateX(-50%) scale(1);
+        }
+        50% {
+          transform: translateX(-50%) scale(1.2);
+        }
+      }
+
+      .room-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .room-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .room-status.past {
+        background: rgba(176, 190, 197, 0.2);
+        color: var(--text-muted);
+      }
+
+      .room-status.current {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+      }
+
+      .room-status.future {
+        background: rgba(255, 215, 0, 0.2);
+        color: var(--accent-yellow);
+      }
+
+      .room-date {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .room-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        margin-bottom: 12px;
+      }
+
+      .room-card.current .room-name {
+        font-size: 2rem;
+      }
+
+      .room-details {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        color: var(--text-light);
+      }
+
+      .room-detail-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .room-detail-value {
+        font-weight: 600;
+      }
+
+      /* Loading State */
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      .spinner {
+        border: 3px solid rgba(255, 215, 0, 0.1);
+        border-top: 3px solid var(--accent-yellow);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error-message {
+        background: rgba(244, 67, 54, 0.2);
+        border: 1px solid #f44336;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        color: #ff8a80;
+        margin: 40px auto;
+        max-width: 600px;
+      }
+
+      .error-message h3 {
+        margin-bottom: 12px;
+        color: #ff8a80;
+      }
+
+      .no-rooms {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+      }
+
+      .no-rooms .material-icons {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .campus-sections {
+          grid-template-columns: 1fr;
+          gap: 60px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          flex-direction: column;
+          gap: 16px;
+          margin: 10px;
+        }
+
+        .nav-brand img {
+          height: 40px;
+          width: 40px;
+        }
+
+        .nav-brand-title {
+          font-size: 1.3rem;
+        }
+
+        .nav-brand-subtitle {
+          font-size: 0.65rem;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        h1 {
+          font-size: 1.8em;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        h1 .material-icons {
+          font-size: 1.3em;
+        }
+
+        .active-room-indicator {
+          width: 100%;
+          max-width: 600px;
+          padding: 20px;
+          margin-bottom: 30px;
+        }
+
+        .active-room-name {
+          font-size: 2rem;
+        }
+
+        .active-room-info {
+          flex-direction: column;
+          gap: 12px;
+          font-size: 1rem;
+        }
+
+        .room-card {
+          padding: 16px;
+          padding-left: 50px;
+          margin-left: 30px;
+        }
+
+        .room-name {
+          font-size: 1.5rem;
+        }
+
+        .room-card.current .room-name {
+          font-size: 1.7rem;
+        }
+
+        .room-details {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo.png" alt="MUDOSTSA Logo" />
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">MUDOSTSA</span>
+          <span class="nav-brand-subtitle"
+            >Mapúa University DOST Scholars' Association</span
+          >
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/app/">App</a></li>
+        <li><a href="/inventory/">Inventory</a></li>
+        <li><a href="/membership/">Member Lookup</a></li>
+        <li><a href="/tambayan/" class="active">Tambayan</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h1>
+        <span
+          class="material-icons"
+          style="font-size: 1.5em; vertical-align: middle"
+          >home</span
+        >
+        Tambayan
+      </h1>
+
+      <div class="campus-sections">
+        <!-- Intramuros Campus Section -->
+        <div class="campus-section">
+          <h2 class="campus-title">
+            <span class="material-icons">location_city</span>
+            Intramuros Campus
+          </h2>
+          <div id="active-room-intramuros">
+            <div class="loading">
+              <div class="spinner"></div>
+              <p>Loading active room...</p>
+            </div>
+          </div>
+          <div id="timeline-intramuros">
+            <div class="loading">
+              <div class="spinner"></div>
+              <p>Loading schedule...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Makati Campus Section -->
+        <div class="campus-section">
+          <h2 class="campus-title">
+            <span class="material-icons">location_city</span>
+            Makati Campus
+          </h2>
+          <div id="active-room-makati">
+            <div class="loading">
+              <div class="spinner"></div>
+              <p>Loading active room...</p>
+            </div>
+          </div>
+          <div id="timeline-makati">
+            <div class="loading">
+              <div class="spinner"></div>
+              <p>Loading schedule...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const SUPABASE_URL = "https://mrbthswtpwwtlrxxphaj.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_w2XkkFyh_nuAmisVns9-eg_ClL2wjcM";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      // Format time to 12-hour format
+      function formatTime(timeString) {
+        if (!timeString) return "";
+
+        // Parse the time string which may include timezone
+        const date = new Date(timeString);
+
+        // Check if it's a valid date
+        if (isNaN(date.getTime())) {
+          // If it's just a time string (HH:MM:SS), parse it manually
+          const [hours, minutes] = timeString.split(":");
+          const hour = parseInt(hours);
+          const ampm = hour >= 12 ? "PM" : "AM";
+          const displayHour = hour % 12 || 12;
+          return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Format as 12-hour time
+        return date.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      }
+
+      // Format date
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+
+      // Determine room status based on current time
+      function getRoomStatus(timeStart, timeEnd) {
+        const now = new Date();
+
+        // Parse the time strings as full dates
+        let startDateTime, endDateTime;
+
+        // Check if timeStart and timeEnd are full ISO strings or just time strings
+        if (timeStart.includes("T") || timeStart.includes("+")) {
+          // Full datetime with timezone
+          startDateTime = new Date(timeStart);
+          endDateTime = new Date(timeEnd);
+        } else {
+          // Just time strings, use today's date
+          const today = now.toISOString().split("T")[0];
+          startDateTime = new Date(`${today}T${timeStart}`);
+          endDateTime = new Date(`${today}T${timeEnd}`);
+        }
+
+        if (now < startDateTime) {
+          return "future";
+        } else if (now >= startDateTime && now <= endDateTime) {
+          return "current";
+        } else {
+          return "past";
+        }
+      }
+
+      // Create room card HTML
+      function createRoomCard(room, status) {
+        const statusLabel = {
+          past: "Ended",
+          current: "Active Now",
+          future: "Upcoming",
+        }[status];
+
+        const statusIcon = {
+          past: "history",
+          current: "play_circle",
+          future: "schedule",
+        }[status];
+
+        // Parse date from time_start
+        const roomDate = new Date(room.time_start);
+        const dateStr = roomDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        return `
+          <div class="room-card ${status}">
+            <div class="room-header">
+              <span class="room-status ${status}">
+                <span class="material-icons" style="font-size: 1rem;">${statusIcon}</span>
+                ${statusLabel}
+              </span>
+            </div>
+            <div class="room-date">
+              <span class="material-icons" style="font-size: 1rem;">calendar_today</span>
+              ${dateStr}
+            </div>
+            <div class="room-name">${room.room}</div>
+            <div class="room-details">
+              <div class="room-detail-label">
+                <span class="material-icons" style="font-size: 1.1rem;">location_on</span>
+                Campus:
+              </div>
+              <div class="room-detail-value">${room.campus}</div>
+              
+              <div class="room-detail-label">
+                <span class="material-icons" style="font-size: 1.1rem;">access_time</span>
+                Start:
+              </div>
+              <div class="room-detail-value">${formatTime(
+                room.time_start
+              )}</div>
+              
+              <div class="room-detail-label">
+                <span class="material-icons" style="font-size: 1.1rem;">access_time</span>
+                End:
+              </div>
+              <div class="room-detail-value">${formatTime(room.time_end)}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Create active room indicator HTML
+      function createActiveRoomIndicator(room) {
+        if (!room) {
+          return `
+            <div class="active-room-indicator no-active">
+              <h2>Active Room</h2>
+              <p class="no-active-message">No active room</p>
+            </div>
+          `;
+        }
+
+        // Parse date from time_start
+        const roomDate = new Date(room.time_start);
+        const dateStr = roomDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        return `
+          <div class="active-room-indicator">
+            <h2>
+              Active Now
+            </h2>
+            <div class="active-room-name">${room.room}</div>
+            <div class="active-room-info">
+              <div class="active-room-info-item">
+                <span class="material-icons">calendar_today</span>
+                <span>${dateStr}</span>
+              </div>
+              <div class="active-room-info-item">
+                <span class="material-icons">access_time</span>
+                <span>${formatTime(room.time_start)} - ${formatTime(
+          room.time_end
+        )}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Load and display tambayan rooms for a specific campus
+      async function loadTambayanForCampus(campus) {
+        const campusId = campus.toLowerCase().replace(/\s+/g, "-");
+        const container = document.getElementById(`timeline-${campusId}`);
+        const activeContainer = document.getElementById(
+          `active-room-${campusId}`
+        );
+
+        try {
+          const { data: rooms, error } = await supabaseClient
+            .from("tambayan")
+            .select("id, created_at, room, campus, time_start, time_end")
+            .eq("campus", campus)
+            .order("time_start", { ascending: false });
+
+          if (error) {
+            throw new Error(`Database error: ${error.message}`);
+          }
+
+          if (!rooms || rooms.length === 0) {
+            activeContainer.innerHTML = createActiveRoomIndicator(null);
+            container.innerHTML = `
+              <div class="no-rooms">
+                <div class="material-icons">event_busy</div>
+                <h3>No Tambayan Scheduled</h3>
+                <p>There are currently no tambayan rooms scheduled for ${campus}.</p>
+              </div>
+            `;
+            return;
+          }
+
+          // Categorize rooms by status
+          const categorizedRooms = {
+            past: [],
+            current: [],
+            future: [],
+          };
+
+          rooms.forEach((room) => {
+            const status = getRoomStatus(room.time_start, room.time_end);
+            categorizedRooms[status].push(room);
+          });
+
+          // Display active room indicator
+          const activeRoom = categorizedRooms.current[0] || null;
+          activeContainer.innerHTML = createActiveRoomIndicator(activeRoom);
+
+          // Select rooms to display (upcoming at top)
+          const displayRooms = [];
+
+          // Add upcoming rooms first (soonest first)
+          // Future rooms come in descending order (furthest first), so reverse
+          const futureRooms = [...categorizedRooms.future]
+            .reverse()
+            .slice(0, 3);
+          futureRooms.forEach((room) => {
+            displayRooms.push({ ...room, status: "future" });
+          });
+
+          // Add current rooms
+          categorizedRooms.current.forEach((room) => {
+            displayRooms.push({ ...room, status: "current" });
+          });
+
+          if (displayRooms.length === 0) {
+            container.innerHTML = `
+              <div class="no-rooms">
+                <div class="material-icons">event_busy</div>
+                <h3>No Active or Upcoming Tambayan</h3>
+                <p>There are no active or upcoming tambayan rooms at the moment.</p>
+              </div>
+            `;
+            return;
+          }
+
+          // Create timeline
+          const timelineHTML = `
+            <div class="timeline">
+              ${displayRooms
+                .map((room) => createRoomCard(room, room.status))
+                .join("")}
+            </div>
+          `;
+
+          container.innerHTML = timelineHTML;
+        } catch (error) {
+          console.error(`Error loading tambayan for ${campus}:`, error);
+          container.innerHTML = `
+            <div class="error-message">
+              <h3>Error Loading Tambayan</h3>
+              <p>${error.message}</p>
+            </div>
+          `;
+        }
+      }
+
+      // Load and display tambayan rooms for all campuses
+      async function loadTambayan() {
+        await Promise.all([
+          loadTambayanForCampus("Intramuros"),
+          loadTambayanForCampus("Makati"),
+        ]);
+
+        // Auto-refresh every minute to update current status
+        setTimeout(loadTambayan, 60000);
+      }
+
+      // Load tambayan on page load
+      loadTambayan();
+    </script>
+  </body>
+</html>

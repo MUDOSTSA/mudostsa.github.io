@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory - MUDOSTSA</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      .material-icons {
+        font-family: "Material Icons";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        vertical-align: middle;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --navy-blue: #0a1929;
+        --dark-blue: #132f4c;
+        --medium-blue: #1e4976;
+        --accent-yellow: #ffd700;
+        --light-yellow: #ffe44d;
+        --border-color: rgba(255, 215, 0, 0.2);
+        --text-light: #e3f2fd;
+        --text-muted: #b0bec5;
+      }
+
+      body {
+        font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--navy-blue) 0%,
+          var(--dark-blue) 100%
+        );
+        color: var(--text-light);
+        min-height: 100vh;
+      }
+
+      /* Navigation Bar */
+      nav {
+        background: rgba(19, 47, 76, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        margin: 20px;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 20px;
+        z-index: 1000;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .nav-brand img {
+        height: 45px;
+        width: 45px;
+        object-fit: contain;
+      }
+
+      .nav-brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-brand-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        letter-spacing: 1px;
+        line-height: 1;
+      }
+
+      .nav-brand-subtitle {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+        line-height: 1;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--border-color);
+        color: var(--accent-yellow);
+      }
+
+      .nav-links a.active {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border-color: var(--accent-yellow);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent-yellow);
+        margin-top: 20px;
+        margin-bottom: 30px;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        font-size: 2.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+      .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 20px 30px 20px;
+      }
+
+      .search-container input[type="text"] {
+        width: 40vw;
+        min-width: 220px;
+        max-width: 500px;
+        padding: 14px 20px;
+        font-size: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        outline: none;
+        background: rgba(19, 47, 76, 0.6);
+        color: var(--text-light);
+        transition: all 0.3s ease;
+      }
+
+      .search-container input[type="text"]::placeholder {
+        color: var(--text-muted);
+      }
+
+      .search-container input[type="text"]:focus {
+        border-color: var(--accent-yellow);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+        background: rgba(19, 47, 76, 0.8);
+      }
+      .table-container {
+        margin: 0 20px 40px 20px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: rgba(19, 47, 76, 0.4);
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background: transparent;
+      }
+
+      th,
+      td {
+        padding: 16px;
+        text-align: left;
+      }
+
+      th {
+        background: rgba(30, 73, 118, 0.8);
+        color: var(--accent-yellow);
+        font-size: 0.95em;
+        font-weight: 600;
+        border-bottom: 2px solid var(--accent-yellow);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      th:hover {
+        background: rgba(30, 73, 118, 1);
+      }
+
+      tr:nth-child(even) td {
+        background-color: rgba(10, 25, 41, 0.3);
+      }
+
+      tr:hover td {
+        background: rgba(30, 73, 118, 0.4);
+        transition: background 0.18s;
+      }
+
+      td {
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.95em;
+        color: var(--text-light);
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        nav {
+          flex-direction: column;
+          gap: 16px;
+          margin: 10px;
+        }
+
+        .nav-brand img {
+          height: 40px;
+          width: 40px;
+        }
+
+        .nav-brand-title {
+          font-size: 1.3rem;
+        }
+
+        .nav-brand-subtitle {
+          font-size: 0.65rem;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        h1 {
+          font-size: 1.8em;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        h1 .material-icons {
+          font-size: 1.3em;
+        }
+
+        .search-container input[type="text"] {
+          width: 90vw;
+        }
+
+        .table-container {
+          margin: 0 10px 20px 10px;
+          overflow-x: auto;
+        }
+
+        table,
+        th,
+        td {
+          font-size: 0.85em;
+        }
+
+        th,
+        td {
+          padding: 10px 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo.png" alt="MUDOSTSA Logo" />
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">MUDOSTSA</span>
+          <span class="nav-brand-subtitle"
+            >Mapúa University DOST Scholars' Association</span
+          >
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/app/">App</a></li>
+        <li><a href="/inventory/" class="active">Inventory</a></li>
+        <li><a href="/membership/">Member Lookup</a></li>
+        <li><a href="/tambayan/">Tambayan</a></li>
+      </ul>
+    </nav>
+
+    <h1>
+      <span
+        class="material-icons"
+        style="font-size: 1.5em; vertical-align: middle"
+        >inventory_2</span
+      >
+      Inventory
+    </h1>
+
+    <div class="search-container">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by name or category..."
+        aria-label="Search inventory"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="table-container">
+      <table id="inventory-table">
+        <thead>
+          <tr>
+            <th data-sort="id" style="cursor: pointer">ID</th>
+            <th data-sort="name" style="cursor: pointer">Name</th>
+            <th data-sort="quantity" style="cursor: pointer">Quantity</th>
+            <th data-sort="category" style="cursor: pointer">Category</th>
+            <th data-sort="description" style="cursor: pointer">Description</th>
+            <th data-sort="updated_at" style="cursor: pointer">Updated At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      const SUPABASE_URL = "https://mrbthswtpwwtlrxxphaj.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_w2XkkFyh_nuAmisVns9-eg_ClL2wjcM";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      let allData = [];
+      let currentSort = { key: null, asc: true };
+
+      async function loadInventory() {
+        const { data, error } = await supabaseClient
+          .from("inventory_public_view")
+          .select("id, name, quantity, category, description, updated_at")
+          .order("id");
+
+        if (error) {
+          console.error("Error fetching inventory:", error);
+          return;
+        }
+
+        allData = data;
+        renderTable(allData);
+      }
+
+      function renderTable(data) {
+        const tbody = document.querySelector("#inventory-table tbody");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No results found</td></tr>`;
+          return;
+        }
+
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+      <td>${item.id}</td>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>${item.category}</td>
+      <td>${item.description ?? ""}</td>
+      <td>${formatDate(item.updated_at)}</td>
+    `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Simple sorting logic
+      function sortTable(key) {
+        if (currentSort.key === key) {
+          currentSort.asc = !currentSort.asc;
+        } else {
+          currentSort.key = key;
+          currentSort.asc = true;
+        }
+        let sorted = [...allData];
+        sorted.sort((a, b) => {
+          let valA = a[key];
+          let valB = b[key];
+          // For null/undefined
+          if (valA == null) valA = "";
+          if (valB == null) valB = "";
+          // Numeric sort for id/quantity
+          if (key === "id" || key === "quantity") {
+            return currentSort.asc ? valA - valB : valB - valA;
+          }
+          // Date sort for updated_at
+          if (key === "updated_at") {
+            return currentSort.asc
+              ? new Date(valA) - new Date(valB)
+              : new Date(valB) - new Date(valA);
+          }
+          // String sort
+          return currentSort.asc
+            ? String(valA).localeCompare(String(valB))
+            : String(valB).localeCompare(String(valA));
+        });
+        renderTable(sorted);
+      }
+
+      // Add click listeners to table headers for sorting
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .querySelectorAll("#inventory-table th[data-sort]")
+          .forEach((th) => {
+            th.addEventListener("click", function () {
+              sortTable(this.getAttribute("data-sort"));
+            });
+          });
+      });
+
+      // Format date to a more human readable format, e.g., 'Aug 20, 2025, 2:30 PM'
+      function formatDate(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return date.toLocaleString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      }
+
+      // Search filtering
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function () {
+          const query = this.value.toLowerCase();
+          const filtered = allData.filter(
+            (item) =>
+              item.name.toLowerCase().includes(query) ||
+              item.category.toLowerCase().includes(query)
+          );
+          renderTable(filtered);
+        });
+
+      loadInventory();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MUDOSTSA Online - Windows App</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      .material-icons {
+        font-family: "Material Icons";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        vertical-align: middle;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --navy-blue: #0a1929;
+        --dark-blue: #132f4c;
+        --medium-blue: #1e4976;
+        --accent-yellow: #ffd700;
+        --light-yellow: #ffe44d;
+        --border-color: rgba(255, 215, 0, 0.2);
+        --text-light: #e3f2fd;
+        --text-muted: #b0bec5;
+      }
+
+      body {
+        font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--navy-blue) 0%,
+          var(--dark-blue) 100%
+        );
+        color: var(--text-light);
+        min-height: 100vh;
+      }
+
+      /* Navigation Bar */
+      nav {
+        background: rgba(19, 47, 76, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        margin: 20px;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 20px;
+        z-index: 1000;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .nav-brand img {
+        height: 45px;
+        width: 45px;
+        object-fit: contain;
+      }
+
+      .nav-brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-brand-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        letter-spacing: 1px;
+        line-height: 1;
+      }
+
+      .nav-brand-subtitle {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+        line-height: 1;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--border-color);
+        color: var(--accent-yellow);
+      }
+
+      .nav-links a.active {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border-color: var(--accent-yellow);
+      }
+
+      /* Main Content */
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent-yellow);
+        margin-top: 20px;
+        margin-bottom: 15px;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        font-size: 2.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        max-width: 700px;
+        margin: 0 auto 40px;
+        font-size: 1.1rem;
+        line-height: 1.8;
+      }
+
+      .github-link {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .github-link a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent-yellow);
+        text-decoration: none;
+        padding: 12px 24px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .github-link a:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--accent-yellow);
+        transform: translateY(-2px);
+      }
+
+      /* Release Card */
+      .release-card {
+        background: rgba(19, 47, 76, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 32px;
+        margin-bottom: 24px;
+        transition: all 0.3s ease;
+      }
+
+      .release-card:hover {
+        border-color: var(--accent-yellow);
+        box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+      }
+
+      .release-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .release-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .release-title h2 {
+        color: var(--accent-yellow);
+        font-size: 1.5rem;
+        margin: 0;
+      }
+
+      .badge {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .badge.latest {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+      }
+
+      .badge.prerelease {
+        background: rgba(255, 215, 0, 0.2);
+        color: var(--accent-yellow);
+        border: 1px solid var(--accent-yellow);
+      }
+
+      .release-meta {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .release-description {
+        color: var(--text-light);
+        line-height: 1.8;
+        margin-bottom: 24px;
+        white-space: pre-wrap;
+      }
+
+      .release-description h3,
+      .release-description h4 {
+        color: var(--accent-yellow);
+        margin-top: 16px;
+        margin-bottom: 8px;
+      }
+
+      .release-description ul,
+      .release-description ol {
+        margin-left: 20px;
+        margin-bottom: 12px;
+      }
+
+      .release-description code {
+        background: rgba(10, 25, 41, 0.6);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+      }
+
+      .download-section {
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+      }
+
+      .download-title {
+        color: var(--accent-yellow);
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .download-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+      }
+
+      .download-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: rgba(30, 73, 118, 0.4);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--text-light);
+      }
+
+      .download-item:hover {
+        background: rgba(30, 73, 118, 0.6);
+        border-color: var(--accent-yellow);
+        transform: translateX(4px);
+      }
+
+      .download-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .download-name {
+        font-weight: 600;
+        color: var(--text-light);
+      }
+
+      .download-size {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .download-icon {
+        color: var(--accent-yellow);
+        font-size: 1.5rem;
+      }
+
+      /* Loading State */
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      .spinner {
+        border: 3px solid rgba(255, 215, 0, 0.1);
+        border-top: 3px solid var(--accent-yellow);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error-message {
+        background: rgba(244, 67, 54, 0.2);
+        border: 1px solid #f44336;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        color: #ff8a80;
+        margin: 40px auto;
+        max-width: 600px;
+      }
+
+      .error-message h3 {
+        margin-bottom: 12px;
+        color: #ff8a80;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        nav {
+          flex-direction: column;
+          gap: 16px;
+          margin: 10px;
+        }
+
+        .nav-brand img {
+          height: 40px;
+          width: 40px;
+        }
+
+        .nav-brand-title {
+          font-size: 1.3rem;
+        }
+
+        .nav-brand-subtitle {
+          font-size: 0.65rem;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        h1 {
+          font-size: 1.8em;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        h1 .material-icons {
+          font-size: 1.3em;
+        }
+
+        .release-card {
+          padding: 20px;
+        }
+
+        .release-header {
+          flex-direction: column;
+        }
+
+        .download-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo.png" alt="MUDOSTSA Logo" />
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">MUDOSTSA</span>
+          <span class="nav-brand-subtitle"
+            >Mapúa University DOST Scholars' Association</span
+          >
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/app/" class="active">App</a></li>
+        <li><a href="/inventory/">Inventory</a></li>
+        <li><a href="/membership/">Member Lookup</a></li>
+        <li><a href="/tambayan/">Tambayan</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h1>
+        <span
+          class="material-icons"
+          style="font-size: 1.5em; vertical-align: middle"
+          >desktop_windows</span
+        >
+        MUDOSTSA Online
+      </h1>
+
+      <p class="description">
+        Download the official MUDOSTSA Online Windows application to access
+        member services, inventory management, and community features.
+      </p>
+
+      <div class="github-link">
+        <a
+          href="https://github.com/MUDOSTSA/mudostsa-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+          View on GitHub
+        </a>
+      </div>
+
+      <div id="releases-container">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading releases...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const GITHUB_API =
+        "https://api.github.com/repos/MUDOSTSA/mudostsa-app/releases";
+
+      // Format file size
+      function formatBytes(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (
+          Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
+        );
+      }
+
+      // Format date
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+
+      // Parse markdown to HTML (basic implementation)
+      function parseMarkdown(text) {
+        if (!text) return "";
+
+        // Convert headers
+        text = text.replace(/^### (.*$)/gim, "<h4>$1</h4>");
+        text = text.replace(/^## (.*$)/gim, "<h3>$1</h3>");
+
+        // Convert bold
+        text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+        // Convert code blocks
+        text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+        // Convert bullet points
+        text = text.replace(/^\* (.*$)/gim, "<li>$1</li>");
+        text = text.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
+
+        return text;
+      }
+
+      // Get platform icon
+      function getPlatformIcon(name) {
+        const nameLower = name.toLowerCase();
+        if (nameLower.includes("apk") || nameLower.includes("android")) {
+          return '<span class="material-icons">android</span>';
+        } else if (nameLower.includes("ios") || nameLower.includes("ipa")) {
+          return '<span class="material-icons">apple</span>';
+        } else if (nameLower.includes("windows")) {
+          return '<span class="material-icons">window</span>';
+        } else if (nameLower.includes("mac")) {
+          return '<span class="material-icons">laptop_mac</span>';
+        } else if (nameLower.includes("linux")) {
+          return '<span class="material-icons">computer</span>';
+        }
+        return '<span class="material-icons">archive</span>';
+      }
+
+      // Create release card
+      function createReleaseCard(release, isLatest) {
+        const card = document.createElement("div");
+        card.className = "release-card";
+
+        const description = parseMarkdown(
+          release.body || "No release notes provided."
+        );
+
+        const assetsHTML =
+          release.assets.length > 0
+            ? `
+          <div class="download-section">
+            <div class="download-title"><span class="material-icons" style="vertical-align: middle; font-size: 1.2em;">download</span> Downloads</div>
+            <div class="download-grid">
+              ${release.assets
+                .map(
+                  (asset) => `
+                <a href="${
+                  asset.browser_download_url
+                }" class="download-item" download>
+                  <div class="download-info">
+                    <span class="download-name">${asset.name}</span>
+                    <span class="download-size">${formatBytes(asset.size)} • ${
+                    asset.download_count
+                  } downloads</span>
+                  </div>
+                  <span class="download-icon">${getPlatformIcon(
+                    asset.name
+                  )}</span>
+                </a>
+              `
+                )
+                .join("")}
+            </div>
+          </div>
+        `
+            : '<p style="color: var(--text-muted); font-style: italic;">No downloadable assets available for this release.</p>';
+
+        card.innerHTML = `
+          <div class="release-header">
+            <div class="release-title">
+              <h2>${release.name || release.tag_name}</h2>
+              ${isLatest ? '<span class="badge latest">Latest</span>' : ""}
+              ${
+                release.prerelease
+                  ? '<span class="badge prerelease">Pre-release</span>'
+                  : ""
+              }
+            </div>
+            <div class="release-meta">
+              Released on ${formatDate(release.published_at)}
+            </div>
+          </div>
+          <div class="release-description">
+            ${description}
+          </div>
+          ${assetsHTML}
+        `;
+
+        return card;
+      }
+
+      // Fetch and display releases
+      async function loadReleases() {
+        const container = document.getElementById("releases-container");
+
+        try {
+          const response = await fetch(GITHUB_API);
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch releases: ${response.status} ${response.statusText}`
+            );
+          }
+
+          const releases = await response.json();
+
+          if (releases.length === 0) {
+            container.innerHTML = `
+              <div class="error-message">
+                <h3>No Releases Available</h3>
+                <p>There are currently no releases available for download. Please check back later!</p>
+              </div>
+            `;
+            return;
+          }
+
+          // Clear loading state
+          container.innerHTML = "";
+
+          // Add each release
+          releases.forEach((release, index) => {
+            const card = createReleaseCard(
+              release,
+              index === 0 && !release.prerelease
+            );
+            container.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Error loading releases:", error);
+          container.innerHTML = `
+            <div class="error-message">
+              <h3>Error Loading Releases</h3>
+              <p>${error.message}</p>
+              <p style="margin-top: 12px; font-size: 0.9rem;">
+                You can still view releases directly on 
+                <a href="https://github.com/MUDOSTSA/mudostsa-app/releases" 
+                   style="color: var(--accent-yellow); text-decoration: underline;"
+                   target="_blank" rel="noopener noreferrer">GitHub</a>.
+              </p>
+            </div>
+          `;
+        }
+      }
+
+      // Load releases on page load
+      loadReleases();
+    </script>
+  </body>
+</html>
