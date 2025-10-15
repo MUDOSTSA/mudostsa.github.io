@@ -121,6 +121,7 @@
         border: 1px solid transparent;
         transition: all 0.3s ease;
         font-weight: 500;
+        white-space: nowrap;
       }
 
       .nav-links a:hover {
@@ -133,6 +134,19 @@
         background: var(--accent-yellow);
         color: var(--navy-blue);
         border-color: var(--accent-yellow);
+      }
+
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--accent-yellow);
+        cursor: pointer;
+        padding: 8px;
+      }
+
+      .nav-toggle .material-icons {
+        font-size: 28px;
       }
 
       .container {
@@ -345,11 +359,36 @@
       }
 
       /* Responsive */
+      @media (max-width: 900px) {
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .nav-brand {
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 16px;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
       @media (max-width: 768px) {
         nav {
-          flex-direction: column;
-          gap: 16px;
+          flex-wrap: wrap;
           margin: 10px;
+          padding: 20px 16px;
+          justify-content: space-between;
+        }
+
+        .nav-brand {
+          width: auto;
+          justify-content: flex-start;
+          margin-bottom: 0;
         }
 
         .nav-brand img {
@@ -365,31 +404,96 @@
           font-size: 0.65rem;
         }
 
+        .nav-toggle {
+          display: block;
+          order: 3;
+          width: auto;
+        }
+
         .nav-links {
-          flex-wrap: wrap;
-          justify-content: center;
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          gap: 40px;
+          margin-top: 20px;
+          padding-bottom: 8px;
+          order: 4;
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .nav-links a {
+          width: 100%;
+          text-align: left;
+          padding: 14px 8px;
         }
 
         .container {
-          padding: 20px;
-          margin: 20px 10px;
+          padding: 24px 16px;
+          margin: 20px auto;
+          max-width: calc(100% - 20px);
+          border-radius: 16px;
+        }
+
+        .header {
+          margin-bottom: 24px;
         }
 
         .header h1 {
-          font-size: 1.5rem;
+          font-size: 1.6rem;
+          margin-bottom: 8px;
+        }
+
+        .header p {
+          font-size: 0.9rem;
+        }
+
+        .input-section {
+          margin-bottom: 24px;
         }
 
         .input-container {
           flex-direction: column;
         }
 
+        #memberIdInput {
+          padding: 14px 16px;
+          font-size: 1.1rem;
+        }
+
         #searchButton {
           width: 100%;
+          padding: 14px 20px;
+          font-size: 1.1rem;
+        }
+
+        .member-info {
+          padding: 20px 16px;
+          border-radius: 12px;
         }
 
         .detail-row {
           grid-template-columns: 1fr;
           gap: 4px;
+          padding: 12px 0;
+        }
+
+        .detail-label {
+          font-size: 0.85rem;
+          margin-bottom: 4px;
+        }
+
+        .detail-value {
+          font-size: 1rem;
+        }
+
+        .error-message,
+        .info-message {
+          padding: 16px;
+          font-size: 0.95rem;
+          border-radius: 12px;
         }
       }
     </style>
@@ -405,7 +509,10 @@
           >
         </div>
       </a>
-      <ul class="nav-links">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span class="material-icons">menu</span>
+      </button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="/">Home</a></li>
         <li><a href="/app/">App</a></li>
         <li><a href="/inventory/">Inventory</a></li>
@@ -579,6 +686,30 @@
 
       // Initialize - disable search button initially
       searchButton.disabled = true;
+
+      // Mobile navigation toggle
+      const navToggle = document.getElementById("navToggle");
+      const navLinks = document.getElementById("navLinks");
+
+      navToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        const icon = navToggle.querySelector(".material-icons");
+        icon.textContent = navLinks.classList.contains("open")
+          ? "close"
+          : "menu";
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !navToggle.contains(e.target) &&
+          !navLinks.contains(e.target) &&
+          navLinks.classList.contains("open")
+        ) {
+          navLinks.classList.remove("open");
+          navToggle.querySelector(".material-icons").textContent = "menu";
+        }
+      });
     </script>
   </body>
 </html>

@@ -120,6 +120,7 @@
         border: 1px solid transparent;
         transition: all 0.3s ease;
         font-weight: 500;
+        white-space: nowrap;
       }
 
       .nav-links a:hover {
@@ -132,6 +133,19 @@
         background: var(--accent-yellow);
         color: var(--navy-blue);
         border-color: var(--accent-yellow);
+      }
+
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--accent-yellow);
+        cursor: pointer;
+        padding: 8px;
+      }
+
+      .nav-toggle .material-icons {
+        font-size: 28px;
       }
 
       /* Main Content */
@@ -228,11 +242,36 @@
       }
 
       /* Responsive */
+      @media (max-width: 900px) {
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .nav-brand {
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 16px;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
       @media (max-width: 768px) {
         nav {
-          flex-direction: column;
-          gap: 16px;
+          flex-wrap: wrap;
           margin: 10px;
+          padding: 20px 16px;
+          justify-content: space-between;
+        }
+
+        .nav-brand {
+          width: auto;
+          justify-content: flex-start;
+          margin-bottom: 0;
         }
 
         .nav-brand img {
@@ -248,9 +287,30 @@
           font-size: 0.65rem;
         }
 
+        .nav-toggle {
+          display: block;
+          order: 3;
+          width: auto;
+        }
+
         .nav-links {
-          flex-wrap: wrap;
-          justify-content: center;
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          gap: 40px;
+          margin-top: 20px;
+          padding-bottom: 8px;
+          order: 4;
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .nav-links a {
+          width: 100%;
+          text-align: left;
+          padding: 14px 8px;
         }
 
         .hero h1 {
@@ -278,7 +338,10 @@
           >
         </div>
       </a>
-      <ul class="nav-links">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span class="material-icons">menu</span>
+      </button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="/" class="active">Home</a></li>
         <li><a href="/app/">App</a></li>
         <li><a href="/inventory/">Inventory</a></li>
@@ -332,5 +395,31 @@
         </div>
       </div>
     </div>
+
+    <script>
+      // Mobile navigation toggle
+      const navToggle = document.getElementById("navToggle");
+      const navLinks = document.getElementById("navLinks");
+
+      navToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        const icon = navToggle.querySelector(".material-icons");
+        icon.textContent = navLinks.classList.contains("open")
+          ? "close"
+          : "menu";
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !navToggle.contains(e.target) &&
+          !navLinks.contains(e.target) &&
+          navLinks.classList.contains("open")
+        ) {
+          navLinks.classList.remove("open");
+          navToggle.querySelector(".material-icons").textContent = "menu";
+        }
+      });
+    </script>
   </body>
 </html>
