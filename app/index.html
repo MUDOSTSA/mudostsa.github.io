@@ -51,6 +51,12 @@
         );
         color: var(--text-light);
         min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      body > *:not(footer) {
+        flex-shrink: 0;
       }
 
       /* Navigation Bar */
@@ -391,6 +397,21 @@
         color: #ff8a80;
       }
 
+      /* Footer */
+      footer {
+        background: rgba(19, 47, 76, 0.8);
+        border-top: 1px solid var(--border-color);
+        padding: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: auto;
+      }
+
+      footer p {
+        margin: 0;
+      }
+
       /* Responsive */
       @media (max-width: 900px) {
         nav {
@@ -729,7 +750,16 @@
 
       // Load releases on page load
       loadReleases();
+    </script>
 
+    <footer>
+      <p>
+        &copy; 2025 Mapúa University DOST Scholars' Association. All rights
+        reserved.
+      </p>
+    </footer>
+
+    <script>
       // Mobile navigation toggle
       const navToggle = document.getElementById("navToggle");
       const navLinks = document.getElementById("navLinks");
