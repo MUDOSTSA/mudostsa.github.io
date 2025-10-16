@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance Log | MUDOSTSA Central Repository</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      .material-icons {
+        font-family: "Material Icons";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        vertical-align: middle;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --navy-blue: #0a1929;
+        --dark-blue: #132f4c;
+        --medium-blue: #1e4976;
+        --accent-yellow: #ffd700;
+        --light-yellow: #ffe44d;
+        --border-color: rgba(255, 215, 0, 0.2);
+        --text-light: #e3f2fd;
+        --text-muted: #b0bec5;
+        --success-green: #4caf50;
+        --error-red: #f44336;
+      }
+
+      body {
+        font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--navy-blue) 0%,
+          var(--dark-blue) 100%
+        );
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      body > *:not(footer) {
+        flex-shrink: 0;
+      }
+
+      /* Navigation Bar */
+      nav {
+        background: rgba(19, 47, 76, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        margin: 20px;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 20px;
+        z-index: 1000;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .nav-brand img {
+        height: 45px;
+        width: 45px;
+        object-fit: contain;
+      }
+
+      .nav-brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-brand-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        letter-spacing: 1px;
+        line-height: 1;
+      }
+
+      .nav-brand-subtitle {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+        line-height: 1;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--border-color);
+        color: var(--accent-yellow);
+      }
+
+      .nav-links a.active {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border-color: var(--accent-yellow);
+      }
+
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--accent-yellow);
+        cursor: pointer;
+        padding: 8px;
+      }
+
+      .nav-toggle .material-icons {
+        font-size: 28px;
+      }
+
+      /* Main Content */
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        min-height: calc(100vh - 200px);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent-yellow);
+        margin-bottom: 40px;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        font-size: 2.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      /* Attendance Form Card */
+      .attendance-card {
+        background: rgba(19, 47, 76, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Toggle Switch */
+      .toggle-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+        padding: 20px;
+        background: rgba(10, 25, 41, 0.4);
+        border-radius: 12px;
+      }
+
+      .toggle-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-light);
+        transition: all 0.3s ease;
+      }
+
+      .toggle-label.inactive {
+        color: var(--text-muted);
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background: var(--medium-blue);
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid var(--border-color);
+      }
+
+      .toggle-switch.active {
+        background: var(--accent-yellow);
+      }
+
+      .toggle-slider {
+        position: absolute;
+        top: 50%;
+        left: 3px;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        background: var(--text-light);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .toggle-switch.active .toggle-slider {
+        transform: translateX(30px) translateY(-50%);
+        background: var(--navy-blue);
+      }
+
+      /* Form Groups */
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-group label {
+        display: block;
+        color: var(--text-light);
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+      }
+
+      .form-group label .required {
+        color: var(--error-red);
+        margin-left: 4px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(10, 25, 41, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--accent-yellow);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+      }
+
+      .form-group input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .form-group select {
+        cursor: pointer;
+      }
+
+      .form-group select option {
+        background: var(--dark-blue);
+        color: var(--text-light);
+      }
+
+      /* Hidden state for form sections */
+      .form-section {
+        display: none;
+      }
+
+      .form-section.active {
+        display: block;
+      }
+
+      /* Submit Button */
+      .submit-button {
+        width: 100%;
+        padding: 16px;
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 32px;
+      }
+
+      .submit-button:hover {
+        background: var(--light-yellow);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+      }
+
+      .submit-button:active {
+        transform: translateY(0);
+      }
+
+      .submit-button:disabled {
+        background: var(--text-muted);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Loading Spinner */
+      .spinner {
+        border: 3px solid rgba(10, 25, 41, 0.3);
+        border-top: 3px solid var(--navy-blue);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: none;
+      }
+
+      .submit-button.loading .spinner {
+        display: block;
+      }
+
+      .submit-button.loading .button-text {
+        display: none;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Message Box */
+      .message-box {
+        margin-top: 24px;
+        padding: 16px;
+        border-radius: 8px;
+        display: none;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message-box.show {
+        display: flex;
+      }
+
+      .message-box.success {
+        background: rgba(76, 175, 80, 0.2);
+        border: 1px solid var(--success-green);
+        color: #a5d6a7;
+      }
+
+      .message-box.error {
+        background: rgba(244, 67, 54, 0.2);
+        border: 1px solid var(--error-red);
+        color: #ff8a80;
+      }
+
+      .message-box .material-icons {
+        font-size: 1.5rem;
+      }
+
+      .message-box .message-text {
+        flex: 1;
+      }
+
+      /* Footer */
+      footer {
+        background: rgba(19, 47, 76, 0.8);
+        border-top: 1px solid var(--border-color);
+        padding: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: auto;
+      }
+
+      footer p {
+        margin: 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .nav-brand {
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 16px;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          flex-wrap: wrap;
+          margin: 10px;
+          padding: 20px 16px;
+          justify-content: space-between;
+        }
+
+        .nav-brand {
+          width: auto;
+          justify-content: flex-start;
+          margin-bottom: 0;
+        }
+
+        .nav-brand img {
+          height: 40px;
+          width: 40px;
+        }
+
+        .nav-brand-title {
+          font-size: 1.3rem;
+        }
+
+        .nav-brand-subtitle {
+          font-size: 0.65rem;
+        }
+
+        .nav-toggle {
+          display: block;
+          order: 3;
+          width: auto;
+        }
+
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          gap: 40px;
+          margin-top: 20px;
+          padding-bottom: 8px;
+          order: 4;
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .nav-links a {
+          width: 100%;
+          text-align: left;
+          padding: 14px 8px;
+        }
+
+        h1 {
+          font-size: 1.8em;
+        }
+
+        .attendance-card {
+          padding: 24px;
+        }
+
+        .toggle-container {
+          flex-direction: column;
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo.png" alt="MUDOSTSA Logo" />
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">MUDOSTSA</span>
+          <span class="nav-brand-subtitle"
+            >Mapúa University DOST Scholars' Association</span
+          >
+        </div>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span class="material-icons">menu</span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/app/">App</a></li>
+        <li><a href="/inventory/">Inventory</a></li>
+        <li><a href="/tambayan/">Tambayan</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h1>
+        <span class="material-icons" style="font-size: 1.5em">
+          fact_check
+        </span>
+        Attendance Log
+      </h1>
+
+      <div class="attendance-card">
+        <!-- Toggle for Member/Non-Member -->
+        <div class="toggle-container">
+          <span class="toggle-label inactive" id="nonMemberLabel"
+            >Non-Member</span
+          >
+          <div class="toggle-switch active" id="toggleSwitch">
+            <div class="toggle-slider"></div>
+          </div>
+          <span class="toggle-label active" id="memberLabel">Member</span>
+        </div>
+
+        <!-- Attendance Code (Common for both) -->
+        <div class="form-group">
+          <label for="attendanceCode">
+            Attendance Code
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="attendanceCode"
+            placeholder="Enter attendance code"
+            required
+          />
+        </div>
+
+        <!-- Member Form Section -->
+        <div class="form-section active" id="memberForm">
+          <div class="form-group">
+            <label for="memberStudentNumber">
+              Student Number
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="memberStudentNumber"
+              placeholder="e.g., 2021XXXXX"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Non-Member Form Section -->
+        <div class="form-section" id="nonMemberForm">
+          <div class="form-group">
+            <label for="nonMemberName">
+              Name
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nonMemberName"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="nonMemberStudentNumber">
+              Student Number
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nonMemberStudentNumber"
+              placeholder="e.g., 2021XXXXX"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="nonMemberProgram">
+              Program
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nonMemberProgram"
+              placeholder="e.g., BS Computer Science"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="nonMemberYear">
+              Year
+              <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="nonMemberYear"
+              placeholder="e.g., 1, 2, 3, 4, 5"
+              min="1"
+              max="5"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="submit-button" id="submitButton">
+          <span class="button-text">
+            <span class="material-icons" style="font-size: 1.2rem">
+              check_circle
+            </span>
+            Log Attendance
+          </span>
+          <div class="spinner"></div>
+        </button>
+
+        <!-- Message Box -->
+        <div class="message-box" id="messageBox">
+          <span class="material-icons" id="messageIcon"></span>
+          <span class="message-text" id="messageText"></span>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        &copy; 2025 Mapúa University DOST Scholars' Association. All rights
+        reserved.
+      </p>
+    </footer>
+
+    <script>
+      const SUPABASE_URL = "https://mrbthswtpwwtlrxxphaj.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_w2XkkFyh_nuAmisVns9-eg_ClL2wjcM";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      // Mobile navigation toggle
+      const navToggle = document.getElementById("navToggle");
+      const navLinks = document.getElementById("navLinks");
+
+      navToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        const icon = navToggle.querySelector(".material-icons");
+        icon.textContent = navLinks.classList.contains("open")
+          ? "close"
+          : "menu";
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !navToggle.contains(e.target) &&
+          !navLinks.contains(e.target) &&
+          navLinks.classList.contains("open")
+        ) {
+          navLinks.classList.remove("open");
+          navToggle.querySelector(".material-icons").textContent = "menu";
+        }
+      });
+
+      // Toggle functionality
+      const toggleSwitch = document.getElementById("toggleSwitch");
+      const memberLabel = document.getElementById("memberLabel");
+      const nonMemberLabel = document.getElementById("nonMemberLabel");
+      const memberForm = document.getElementById("memberForm");
+      const nonMemberForm = document.getElementById("nonMemberForm");
+
+      let isMember = true;
+
+      toggleSwitch.addEventListener("click", () => {
+        isMember = !isMember;
+
+        if (isMember) {
+          toggleSwitch.classList.add("active");
+          memberLabel.classList.add("active");
+          nonMemberLabel.classList.add("inactive");
+          memberForm.classList.add("active");
+          nonMemberForm.classList.remove("active");
+        } else {
+          toggleSwitch.classList.remove("active");
+          memberLabel.classList.remove("active");
+          nonMemberLabel.classList.remove("active");
+          memberForm.classList.remove("active");
+          nonMemberForm.classList.add("active");
+        }
+
+        // Clear message box when toggling
+        hideMessage();
+      });
+
+      // Message box functions
+      function showMessage(message, type) {
+        const messageBox = document.getElementById("messageBox");
+        const messageIcon = document.getElementById("messageIcon");
+        const messageText = document.getElementById("messageText");
+
+        messageBox.classList.remove("success", "error");
+        messageBox.classList.add(type, "show");
+
+        if (type === "success") {
+          messageIcon.textContent = "check_circle";
+        } else {
+          messageIcon.textContent = "error";
+        }
+
+        messageText.textContent = message;
+      }
+
+      function hideMessage() {
+        const messageBox = document.getElementById("messageBox");
+        messageBox.classList.remove("show");
+      }
+
+      // Form submission
+      const submitButton = document.getElementById("submitButton");
+
+      submitButton.addEventListener("click", async () => {
+        hideMessage();
+
+        // Get attendance code
+        const code = document.getElementById("attendanceCode").value.trim();
+
+        if (!code) {
+          showMessage("Please enter an attendance code", "error");
+          return;
+        }
+
+        // Validate based on member type
+        if (isMember) {
+          const studentNumber = document
+            .getElementById("memberStudentNumber")
+            .value.trim();
+
+          if (!studentNumber) {
+            showMessage("Please enter your student number", "error");
+            return;
+          }
+
+          await logMemberAttendance(code, studentNumber);
+        } else {
+          const name = document.getElementById("nonMemberName").value.trim();
+          const studentNumber = document
+            .getElementById("nonMemberStudentNumber")
+            .value.trim();
+          const program = document
+            .getElementById("nonMemberProgram")
+            .value.trim();
+          const year = document.getElementById("nonMemberYear").value.trim();
+
+          if (!name || !studentNumber || !program || !year) {
+            showMessage("Please fill in all required fields", "error");
+            return;
+          }
+
+          await logNonMemberAttendance(
+            code,
+            name,
+            program,
+            year,
+            studentNumber
+          );
+        }
+      });
+
+      // Log member attendance
+      async function logMemberAttendance(code, memberId) {
+        submitButton.disabled = true;
+        submitButton.classList.add("loading");
+
+        try {
+          const { data, error } = await supabaseClient.rpc(
+            "log_member_attendance",
+            {
+              p_code: code,
+              p_member_id: parseInt(memberId),
+            }
+          );
+
+          if (error) {
+            throw error;
+          }
+
+          showMessage("Attendance logged successfully!", "success");
+          document.getElementById("attendanceCode").value = "";
+          document.getElementById("memberStudentNumber").value = "";
+        } catch (error) {
+          console.error("Error logging member attendance:", error);
+          showMessage(
+            error.message || "Failed to log attendance. Please try again.",
+            "error"
+          );
+        } finally {
+          submitButton.disabled = false;
+          submitButton.classList.remove("loading");
+        }
+      }
+
+      // Log non-member attendance
+      async function logNonMemberAttendance(
+        code,
+        name,
+        program,
+        year,
+        studentNumber
+      ) {
+        submitButton.disabled = true;
+        submitButton.classList.add("loading");
+
+        try {
+          const { data, error } = await supabaseClient.rpc(
+            "log_nonmember_attendance",
+            {
+              p_code: code,
+              p_name: name,
+              p_program: program,
+              p_year: parseInt(year),
+              p_student_number: parseInt(studentNumber),
+            }
+          );
+
+          if (error) {
+            throw error;
+          }
+
+          showMessage("Attendance logged successfully!", "success");
+          document.getElementById("attendanceCode").value = "";
+          document.getElementById("nonMemberName").value = "";
+          document.getElementById("nonMemberStudentNumber").value = "";
+          document.getElementById("nonMemberProgram").value = "";
+          document.getElementById("nonMemberYear").value = "";
+        } catch (error) {
+          console.error("Error logging non-member attendance:", error);
+          showMessage(
+            error.message || "Failed to log attendance. Please try again.",
+            "error"
+          );
+        } finally {
+          submitButton.disabled = false;
+          submitButton.classList.remove("loading");
+        }
+      }
+    </script>
+  </body>
+</html>

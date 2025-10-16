@@ -171,7 +171,7 @@
         text-align: center;
         color: var(--accent-yellow);
         margin-top: 20px;
-        margin-bottom: 40px;
+        margin-bottom: 20px;
         letter-spacing: 1.5px;
         font-weight: 700;
         font-size: 2.2em;
@@ -179,6 +179,32 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
+      }
+
+      /* Attendance Button */
+      .attendance-button-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+      }
+
+      .attendance-button {
+        display: inline-block;
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        padding: 14px 32px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid var(--accent-yellow);
+      }
+
+      .attendance-button:hover {
+        background: transparent;
+        color: var(--accent-yellow);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
       }
 
       .campus-sections {
@@ -652,7 +678,6 @@
         <li><a href="/">Home</a></li>
         <li><a href="/app/">App</a></li>
         <li><a href="/inventory/">Inventory</a></li>
-        <li><a href="/memberlookup/">Member Lookup</a></li>
         <li><a href="/tambayan/" class="active">Tambayan</a></li>
       </ul>
     </nav>
@@ -666,6 +691,12 @@
         >
         Room Tambayan
       </h1>
+
+      <div class="attendance-button-container">
+        <a href="/tambayan/attendance/" class="attendance-button">
+          Log Attendance
+        </a>
+      </div>
 
       <div class="campus-sections">
         <!-- Intramuros Campus Section -->
