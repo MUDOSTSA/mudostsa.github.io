@@ -188,6 +188,16 @@
       }
 
       /* Cards Grid */
+      .section-heading {
+        text-align: center;
+        color: var(--accent-yellow);
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 60px;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+      }
+
       .cards-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -379,6 +389,8 @@
         </p>
       </div>
 
+      <h2 class="section-heading">Main Features</h2>
+
       <div class="cards-grid">
         <div class="card" onclick="window.location.href='/app/'">
           <h3>
@@ -403,6 +415,18 @@
           <p>
             View the active tambayan schedule. See current, past, and upcoming
             community spaces with room locations and times.
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section-heading">Other Features</h2>
+
+      <div class="cards-grid">
+        <div class="card" onclick="window.location.href='/attendance/'">
+          <h3><span class="material-icons">fact_check</span> Attendance Log</h3>
+          <p>
+            Log your attendance for tambayan sessions and events. Quick and easy
+            check-in for both members and non-members.
           </p>
         </div>
       </div>
