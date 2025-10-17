@@ -975,17 +975,12 @@
             displayRooms.push({ ...room, status: "future" });
           });
 
-          // Add current rooms
-          categorizedRooms.current.forEach((room) => {
-            displayRooms.push({ ...room, status: "current" });
-          });
-
           if (displayRooms.length === 0) {
             container.innerHTML = `
               <div class="no-rooms">
                 <div class="material-icons">event_busy</div>
-                <h3>No Active or Upcoming Tambayan</h3>
-                <p>There are no active or upcoming tambayan rooms at the moment.</p>
+                <h3>No Upcoming Tambayan</h3>
+                <p>There are no upcoming tambayan rooms at the moment.</p>
               </div>
             `;
             return;
