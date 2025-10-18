@@ -301,10 +301,33 @@
         padding-top: 20px;
       }
 
+      .platform-section {
+        margin-bottom: 24px;
+      }
+
+      .platform-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .platform-title {
+        color: var(--accent-yellow);
+        font-size: 1rem;
+        margin-bottom: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-left: 4px;
+      }
+
+      .platform-title .material-icons {
+        font-size: 1.2rem;
+      }
+
       .download-title {
         color: var(--accent-yellow);
         font-size: 1.1rem;
-        margin-bottom: 12px;
+        margin-bottom: 20px;
         font-weight: 600;
         display: flex;
         align-items: center;
@@ -632,22 +655,40 @@
         return '<span class="material-icons">archive</span>';
       }
 
-      // Create release card
-      function createReleaseCard(release, isLatest) {
-        const card = document.createElement("div");
-        card.className = "release-card";
+      // Group assets by platform
+      function groupAssetsByPlatform(assets) {
+        const groups = {
+          windows: [],
+          linux: [],
+          other: [],
+        };
 
-        const description = parseMarkdown(
-          release.body || "No release notes provided."
-        );
+        assets.forEach((asset) => {
+          const nameLower = asset.name.toLowerCase();
+          if (nameLower.endsWith(".exe") || nameLower.endsWith(".msi")) {
+            groups.windows.push(asset);
+          } else if (nameLower.endsWith(".deb")) {
+            groups.linux.push(asset);
+          } else {
+            groups.other.push(asset);
+          }
+        });
 
-        const assetsHTML =
-          release.assets.length > 0
-            ? `
-          <div class="download-section">
-            <div class="download-title"><span class="material-icons" style="vertical-align: middle; font-size: 1.2em;">download</span> Downloads</div>
+        return groups;
+      }
+
+      // Create download section HTML
+      function createDownloadSection(title, icon, assets) {
+        if (assets.length === 0) return "";
+
+        return `
+          <div class="platform-section">
+            <div class="platform-title">
+              <span class="material-icons">${icon}</span>
+              ${title}
+            </div>
             <div class="download-grid">
-              ${release.assets
+              ${assets
                 .map(
                   (asset) => `
                 <a href="${
@@ -668,8 +709,42 @@
                 .join("")}
             </div>
           </div>
-        `
-            : '<p style="color: var(--text-muted); font-style: italic;">No downloadable assets available for this release.</p>';
+        `;
+      }
+
+      // Create release card
+      function createReleaseCard(release, isLatest) {
+        const card = document.createElement("div");
+        card.className = "release-card";
+
+        const description = parseMarkdown(
+          release.body || "No release notes provided."
+        );
+
+        let assetsHTML = "";
+
+        if (release.assets.length > 0) {
+          const groupedAssets = groupAssetsByPlatform(release.assets);
+
+          assetsHTML = `
+            <div class="download-section">
+              <div class="download-title">
+                <span class="material-icons" style="vertical-align: middle; font-size: 1.2em;">download</span> 
+                Downloads
+              </div>
+              ${createDownloadSection(
+                "Windows",
+                "window",
+                groupedAssets.windows
+              )}
+              ${createDownloadSection("Linux", "computer", groupedAssets.linux)}
+              ${createDownloadSection("Other", "archive", groupedAssets.other)}
+            </div>
+          `;
+        } else {
+          assetsHTML =
+            '<p style="color: var(--text-muted); font-style: italic;">No downloadable assets available for this release.</p>';
+        }
 
         card.innerHTML = `
           <div class="release-header">
