@@ -411,6 +411,27 @@
         flex: 1;
       }
 
+      /* Info Note */
+      .info-note {
+        margin-top: 24px;
+        padding: 16px;
+        background: rgba(30, 73, 118, 0.3);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        border-radius: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      .info-note .material-icons {
+        font-size: 1.2rem;
+        color: var(--accent-yellow);
+        flex-shrink: 0;
+      }
+
       /* Footer */
       footer {
         background: rgba(19, 47, 76, 0.8);
@@ -658,6 +679,16 @@
           <span class="material-icons" id="messageIcon"></span>
           <span class="message-text" id="messageText"></span>
         </div>
+
+        <!-- Info Note -->
+        <div class="info-note">
+          <span class="material-icons">info</span>
+          <span>
+            <strong>Note:</strong> If logging as a Member does not work, please
+            log as Non-Member instead. Our member database is still being
+            updated.
+          </span>
+        </div>
       </div>
     </div>
 
@@ -701,6 +732,14 @@
           navToggle.querySelector(".material-icons").textContent = "menu";
         }
       });
+
+      // Check for query parameters and set attendance code
+      const urlParams = new URLSearchParams(window.location.search);
+      const codeParam = urlParams.get("code");
+
+      if (codeParam) {
+        document.getElementById("attendanceCode").value = codeParam;
+      }
 
       // Toggle functionality
       const toggleSwitch = document.getElementById("toggleSwitch");
