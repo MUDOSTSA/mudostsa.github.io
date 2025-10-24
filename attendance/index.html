@@ -163,6 +163,8 @@
         margin: 0 auto;
         padding: 40px 20px;
         min-height: calc(100vh - 200px);
+        width: 100%;
+        box-sizing: border-box;
       }
 
       h1 {
@@ -185,6 +187,7 @@
         border-radius: 16px;
         padding: 40px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
       }
 
       /* Toggle Switch */
@@ -371,9 +374,12 @@
         padding: 16px;
         border-radius: 8px;
         display: none;
-        align-items: center;
+        align-items: flex-start;
         gap: 12px;
         animation: slideIn 0.3s ease;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
       }
 
       @keyframes slideIn {
@@ -405,10 +411,14 @@
 
       .message-box .material-icons {
         font-size: 1.5rem;
+        flex-shrink: 0;
       }
 
       .message-box .message-text {
         flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       /* Info Note */
@@ -551,7 +561,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="/">Home</a></li>
         <li><a href="/app/">App</a></li>
-        <li><a href="/inventory/">Inventory</a></li>
+        <li><a href="/events/">Events</a></li>
         <li><a href="/tambayan/">Tambayan</a></li>
       </ul>
     </nav>
