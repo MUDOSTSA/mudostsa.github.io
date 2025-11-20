@@ -213,6 +213,7 @@
 
       .form-group {
         display: flex;
+        justify-content: flex-end;
         flex-direction: column;
         gap: 8px;
       }
@@ -596,6 +597,58 @@
       <p class="subtitle">Semestral Progress and Engagement Form</p>
 
       <form id="spefForm" class="form-card" autocomplete="on">
+        <div
+          style="
+            margin-bottom: 32px;
+            padding: 20px;
+            background: rgba(30, 73, 118, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+          "
+        >
+          <h3
+            style="
+              color: var(--accent-yellow);
+              margin-bottom: 16px;
+              font-size: 1.1rem;
+              text-align: center;
+            "
+          >
+            Upload Signed SPEF (Optional)
+          </h3>
+          <p
+            style="
+              color: var(--text-muted);
+              margin-bottom: 16px;
+              text-align: center;
+              font-size: 0.95rem;
+            "
+          >
+            If you have already have a signed SPEF, upload it here. The form
+            will extract existing values for you to edit.
+          </p>
+          <div class="file-upload" style="margin-bottom: 0">
+            <label
+              for="signedPdfUpload"
+              class="file-upload-area"
+              id="signedPdfUploadArea"
+              style="padding: 24px"
+            >
+              <div
+                class="file-upload-icon material-icons"
+                style="font-size: 2.5rem"
+              >
+                upload_file
+              </div>
+              <div class="file-upload-text">
+                Upload signed PDF to extract and edit values
+              </div>
+              <div class="file-upload-filename" id="signedPdfFilename"></div>
+            </label>
+            <input type="file" id="signedPdfUpload" accept="application/pdf" />
+          </div>
+        </div>
+
         <p
           style="
             text-align: center;
@@ -707,22 +760,28 @@
         <div class="form-row">
           <div class="form-group">
             <label for="landbankAccount"
-              >Landbank Account <span class="required">*</span></label
+              ><div style="display: flex; flex-direction: column">
+                <span
+                  style="
+                    font-size: 12px;
+                    font-weight: 400;
+                    color: var(--text-muted);
+                  "
+                  >(Leave blank if your form has not yet been signed by the
+                  MU-DOST SA Internal Affairs)</span
+                >Landbank Account
+              </div></label
             >
             <input
               type="text"
               id="landbankAccount"
               name="landbankAccount"
               placeholder="XXXX-XXXX-XX"
-              required
             />
           </div>
 
           <div class="form-group">
-            <label for="gwa"
-              >Latest General Weighted Average
-              <span class="required">*</span></label
-            >
+            <label for="gwa">Latest General Weighted Average </label>
             <input
               type="number"
               id="gwa"
@@ -732,7 +791,6 @@
               step="0.01"
               min="1.00"
               max="5.00"
-              required
             />
           </div>
         </div>
@@ -756,9 +814,7 @@
           </div>
 
           <div class="form-group">
-            <label for="remainingUnits"
-              >Remaining Number of Units <span class="required">*</span></label
-            >
+            <label for="remainingUnits">Remaining Number of Units</label>
             <input
               type="number"
               id="remainingUnits"
@@ -766,7 +822,6 @@
               autocomplete="off"
               placeholder="21"
               min="0"
-              required
             />
           </div>
         </div>
@@ -981,6 +1036,141 @@
       setupFileUpload("gradesPhoto", "gradesUploadArea", "gradesFilename");
       setupFileUpload("ecmPhoto", "ecmUploadArea", "ecmFilename");
 
+      // Setup signed PDF upload with extraction
+      const signedPdfInput = document.getElementById("signedPdfUpload");
+      const signedPdfArea = document.getElementById("signedPdfUploadArea");
+      const signedPdfFilename = document.getElementById("signedPdfFilename");
+      let uploadedSignedPdf = null;
+
+      signedPdfInput.addEventListener("change", async (e) => {
+        if (e.target.files.length > 0) {
+          const file = e.target.files[0];
+          signedPdfFilename.textContent = `Loading ${file.name}...`;
+          signedPdfArea.classList.add("has-file");
+
+          try {
+            const pdfBytes = await file.arrayBuffer();
+            const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+            uploadedSignedPdf = pdfDoc;
+
+            // Extract form field values
+            const form = pdfDoc.getForm();
+            const fieldMapping = {
+              name: "Text-sWFPkW6MVz",
+              studentNumber: "Text-Rl_9Eev8b-",
+              programYear: "Text-_OSp2_2hmR",
+              spasID: "Text-IMvu3jb6Iz",
+              contactNumber: "Text-3ZzzkxzZJC",
+              email: "Text-cDGR4dWtYV",
+              landbankAccount: "Text-n-GCZaUYCT",
+              gwa: "Text-2SX5WH6w31",
+              term: "Text-48K59ov9j2",
+              remainingUnits: "Text-YjlYVVFmmi",
+              attendedEventYes: "CheckBox-SlajNAHa5-",
+              attendedEventNo: "CheckBox-4IN2QSKOEs",
+              isMemberYes: "CheckBox-epeHPuxIf5",
+              isMemberNo: "CheckBox-SjyQXS6sQ5",
+              attendedEvent: "Text-U0ji9bUEO3",
+            };
+
+            // Pre-fill form fields from PDF
+            try {
+              const nameValue = form.getTextField(fieldMapping.name).getText();
+              if (nameValue) document.getElementById("name").value = nameValue;
+
+              const studentNumValue = form
+                .getTextField(fieldMapping.studentNumber)
+                .getText();
+              if (studentNumValue)
+                document.getElementById("studentNumber").value =
+                  studentNumValue;
+
+              const contactValue = form
+                .getTextField(fieldMapping.contactNumber)
+                .getText();
+              if (contactValue)
+                document.getElementById("contactNumber").value = contactValue;
+
+              const emailValue = form
+                .getTextField(fieldMapping.email)
+                .getText();
+              if (emailValue)
+                document.getElementById("email").value = emailValue;
+
+              const programYearValue = form
+                .getTextField(fieldMapping.programYear)
+                .getText();
+              if (programYearValue)
+                document.getElementById("programYear").value = programYearValue;
+
+              const spasIdValue = form
+                .getTextField(fieldMapping.spasID)
+                .getText();
+              if (spasIdValue)
+                document.getElementById("spasId").value = spasIdValue;
+
+              const landbankValue = form
+                .getTextField(fieldMapping.landbankAccount)
+                .getText();
+              if (landbankValue)
+                document.getElementById("landbankAccount").value =
+                  landbankValue;
+
+              const gwaValue = form.getTextField(fieldMapping.gwa).getText();
+              if (gwaValue) document.getElementById("gwa").value = gwaValue;
+
+              const termValue = form.getTextField(fieldMapping.term).getText();
+              if (termValue)
+                document.getElementById("termApplied").value = termValue;
+
+              const remainingUnitsValue = form
+                .getTextField(fieldMapping.remainingUnits)
+                .getText();
+              if (remainingUnitsValue)
+                document.getElementById("remainingUnits").value =
+                  remainingUnitsValue;
+
+              const eventNameValue = form
+                .getTextField(fieldMapping.attendedEvent)
+                .getText();
+              if (eventNameValue) {
+                document.getElementById("attendedEvent").checked = true;
+                document.getElementById("eventNameField").classList.add("show");
+                document.getElementById("eventName").value = eventNameValue;
+              }
+
+              // Check checkboxes
+              try {
+                if (
+                  form.getCheckBox(fieldMapping.attendedEventYes).isChecked()
+                ) {
+                  document.getElementById("attendedEvent").checked = true;
+                  document
+                    .getElementById("eventNameField")
+                    .classList.add("show");
+                }
+              } catch (e) {}
+
+              try {
+                if (form.getCheckBox(fieldMapping.isMemberYes).isChecked()) {
+                  document.getElementById("isMember").checked = true;
+                }
+              } catch (e) {}
+
+              signedPdfFilename.textContent = `✓ Loaded and extracted values from ${file.name}`;
+            } catch (e) {
+              console.warn("Some fields could not be extracted:", e);
+              signedPdfFilename.textContent = `✓ ${file.name} (extraction incomplete)`;
+            }
+          } catch (error) {
+            console.error("Error loading PDF:", error);
+            signedPdfFilename.textContent = `Error loading ${file.name}`;
+            signedPdfArea.classList.remove("has-file");
+            uploadedSignedPdf = null;
+          }
+        }
+      });
+
       // Clear file inputs on page load
       window.addEventListener("load", () => {
         const gradesInput = document.getElementById("gradesPhoto");
@@ -1098,12 +1288,26 @@
             return;
           }
 
+          // Show loading state
+          const btn = document.getElementById("generatePdfBtn");
+          const originalContent = btn.innerHTML;
+          btn.innerHTML =
+            '<span class="material-icons">hourglass_empty</span> Generating PDF...';
+          btn.disabled = true;
+
           try {
-            // Load the blank PDF
-            const existingPdfBytes = await fetch(
-              "/spef/resources/SEMESTRAL-PROGRESS-AND-ENGAGEMENT-FORM.pdf"
-            ).then((res) => res.arrayBuffer());
-            const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+            // Load the blank PDF or use uploaded signed PDF
+            let pdfDoc;
+            if (uploadedSignedPdf) {
+              // Use the uploaded signed PDF as template
+              pdfDoc = uploadedSignedPdf;
+            } else {
+              // Load the blank PDF
+              const existingPdfBytes = await fetch(
+                "/spef/resources/SEMESTRAL-PROGRESS-AND-ENGAGEMENT-FORM.pdf"
+              ).then((res) => res.arrayBuffer());
+              pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+            }
 
             // Get the form
             const form = pdfDoc.getForm();
@@ -1277,6 +1481,8 @@
             }
 
             // Save the PDF
+            btn.innerHTML =
+              '<span class="material-icons">sync</span> Saving PDF...';
             const pdfBytes = await pdfDoc.save();
 
             // Download the filled PDF
@@ -1287,11 +1493,19 @@
               .getElementById("name")
               .value.replace(/\s+/g, "_")}.pdf`;
             link.click();
+
+            // Restore button
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
           } catch (error) {
             console.error("Error generating PDF:", error);
             alert(
               "Error generating PDF. Please ensure the PDF template has the correct form field names."
             );
+
+            // Restore button on error
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
           }
         });
     </script>
