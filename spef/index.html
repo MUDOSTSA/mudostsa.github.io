@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPEF | MUDOSTSA Central Repository</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <style>
+      .material-icons {
+        font-family: "Material Icons";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        vertical-align: middle;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --navy-blue: #0a1929;
+        --dark-blue: #132f4c;
+        --medium-blue: #1e4976;
+        --accent-yellow: #ffd700;
+        --light-yellow: #ffe44d;
+        --border-color: rgba(255, 215, 0, 0.2);
+        --text-light: #e3f2fd;
+        --text-muted: #b0bec5;
+      }
+
+      body {
+        font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--navy-blue) 0%,
+          var(--dark-blue) 100%
+        );
+        color: var(--text-light);
+        min-height: 100vh;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+      }
+
+      body > *:not(footer) {
+        flex-shrink: 0;
+      }
+
+      /* Navigation Bar */
+      nav {
+        background: rgba(19, 47, 76, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        margin: 20px;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 20px;
+        z-index: 1000;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .nav-brand img {
+        height: 45px;
+        width: 45px;
+        object-fit: contain;
+      }
+
+      .nav-brand-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-brand-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        letter-spacing: 1px;
+        line-height: 1;
+      }
+
+      .nav-brand-subtitle {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+        line-height: 1;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--border-color);
+        color: var(--accent-yellow);
+      }
+
+      .nav-links a.active {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border-color: var(--accent-yellow);
+      }
+
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--accent-yellow);
+        cursor: pointer;
+        padding: 8px;
+      }
+
+      .nav-toggle .material-icons {
+        font-size: 28px;
+      }
+
+      /* Main Content */
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent-yellow);
+        margin-bottom: 20px;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        font-size: 2.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+      }
+
+      /* Form Card */
+      .form-card {
+        background: rgba(19, 47, 76, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        margin-bottom: 24px;
+      }
+
+      .form-section-title {
+        color: var(--accent-yellow);
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group label {
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .form-group label .required {
+        color: #f44336;
+        margin-left: 4px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="email"],
+      .form-group input[type="tel"],
+      .form-group input[type="number"],
+      .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(10, 25, 41, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--accent-yellow);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+      }
+
+      .form-group input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .form-group select {
+        cursor: pointer;
+      }
+
+      .form-group select option {
+        background: var(--dark-blue);
+        color: var(--text-light);
+      }
+
+      /* File Upload */
+      .file-upload {
+        position: relative;
+        margin-bottom: 24px;
+      }
+
+      .file-upload-label {
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .file-upload-area {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(10, 25, 41, 0.4);
+      }
+
+      .file-upload-area:hover {
+        border-color: var(--accent-yellow);
+        background: rgba(10, 25, 41, 0.6);
+      }
+
+      .file-upload-area.has-file {
+        border-color: var(--accent-yellow);
+        background: rgba(255, 215, 0, 0.05);
+      }
+
+      .file-upload-icon {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+      }
+
+      .file-upload-area.has-file .file-upload-icon {
+        color: var(--accent-yellow);
+      }
+
+      .file-upload-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .file-upload-filename {
+        color: var(--accent-yellow);
+        font-weight: 600;
+        margin-top: 8px;
+      }
+
+      .file-upload input[type="file"] {
+        display: none;
+      }
+
+      /* Checkbox */
+      .checkbox-group {
+        margin-bottom: 24px;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        color: var(--text-light);
+        font-weight: 500;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .checkbox-label:hover {
+        background: rgba(255, 215, 0, 0.05);
+      }
+
+      .checkbox-label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--accent-yellow);
+      }
+
+      .conditional-field {
+        margin-left: 32px;
+        margin-top: 12px;
+        display: none;
+      }
+
+      .conditional-field.show {
+        display: block;
+      }
+
+      /* Signature */
+      .signature-container {
+        margin-bottom: 24px;
+      }
+
+      .signature-pad {
+        width: 100%;
+        height: 200px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        background: white;
+        cursor: crosshair;
+        touch-action: none;
+      }
+
+      .signature-controls {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .signature-button {
+        padding: 8px 16px;
+        background: rgba(10, 25, 41, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .signature-button:hover {
+        background: rgba(30, 73, 118, 0.6);
+        border-color: var(--accent-yellow);
+      }
+
+      /* Buttons */
+      .button-group {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 32px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 32px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        transition: all 0.3s ease;
+        border: 1px solid;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: var(--accent-yellow);
+        color: var(--navy-blue);
+        border-color: var(--accent-yellow);
+      }
+
+      .btn-primary:hover {
+        background: transparent;
+        color: var(--accent-yellow);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--text-light);
+        border-color: var(--border-color);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: var(--accent-yellow);
+        color: var(--accent-yellow);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Footer */
+      footer {
+        background: rgba(19, 47, 76, 0.8);
+        border-top: 1px solid var(--border-color);
+        padding: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: auto;
+      }
+
+      footer p {
+        margin: 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .nav-brand {
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 16px;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          flex-wrap: wrap;
+          margin: 10px;
+          padding: 20px 16px;
+          justify-content: space-between;
+        }
+
+        .nav-brand {
+          width: auto;
+          justify-content: flex-start;
+          margin-bottom: 0;
+        }
+
+        .nav-brand img {
+          height: 40px;
+          width: 40px;
+        }
+
+        .nav-brand-title {
+          font-size: 1.3rem;
+        }
+
+        .nav-brand-subtitle {
+          font-size: 0.65rem;
+        }
+
+        .nav-toggle {
+          display: block;
+          order: 3;
+          width: auto;
+        }
+
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          gap: 40px;
+          margin-top: 20px;
+          padding-bottom: 8px;
+          order: 4;
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .nav-links a {
+          width: 100%;
+          text-align: left;
+          padding: 14px 8px;
+        }
+
+        h1 {
+          font-size: 1.8em;
+        }
+
+        .form-card {
+          padding: 24px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .button-group {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo.png" alt="MUDOSTSA Logo" />
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">MUDOSTSA</span>
+          <span class="nav-brand-subtitle"
+            >Mapúa University DOST Scholars' Association</span
+          >
+        </div>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span class="material-icons">menu</span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/app/">App</a></li>
+        <li><a href="/events/">Events</a></li>
+        <li><a href="/tambayan/">Tambayan</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <h1>
+        <span class="material-icons" style="font-size: 1.5em">
+          description
+        </span>
+        SPEF
+      </h1>
+      <p class="subtitle">Semestral Progress and Engagement Form</p>
+
+      <form id="spefForm" class="form-card" autocomplete="on">
+        <p
+          style="
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.8;
+            font-size: 1rem;
+          "
+        >
+          Your GWA, remaining units, grades, and eCM can all be found in your
+          <a
+            href="https://my.mapua.edu.ph"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="
+              color: var(--accent-yellow);
+              text-decoration: none;
+              font-weight: 600;
+            "
+            onmouseover="this.style.textDecoration='underline'"
+            onmouseout="this.style.textDecoration='none'"
+          >
+            myMapúa portal </a
+          >. Your SPAS-ID can be found in your Notice of Award.
+        </p>
+
+        <h2 class="form-section-title">Personal Information</h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Juan Dela Cruz"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="studentNumber"
+              >Student Number <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="studentNumber"
+              name="studentNumber"
+              placeholder="2021XXXXXX"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contactNumber"
+              >Contact Number <span class="required">*</span></label
+            >
+            <input
+              type="tel"
+              id="contactNumber"
+              name="tel"
+              autocomplete="tel"
+              placeholder="+63 912 345 6789"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email"
+              >Email Address <span class="required">*</span></label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              placeholder="jdelacruz@mymail.mapua.edu.ph"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="programYear"
+              >Program & Year <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="programYear"
+              name="programYear"
+              placeholder="CS - 3"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="spasId">SPAS-ID <span class="required">*</span></label>
+            <input
+              type="text"
+              id="spasId"
+              placeholder="U-XXXX-XX-XXXXX"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="landbankAccount"
+              >Landbank Account <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="landbankAccount"
+              name="landbankAccount"
+              placeholder="XXXX-XXXX-XX"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="gwa"
+              >Latest General Weighted Average
+              <span class="required">*</span></label
+            >
+            <input
+              type="number"
+              id="gwa"
+              name="gwa"
+              autocomplete="off"
+              placeholder="1.50"
+              step="0.01"
+              min="1.00"
+              max="5.00"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="termApplied"
+              >Term Applied For <span class="required">*</span></label
+            >
+            <select
+              id="termApplied"
+              name="termApplied"
+              autocomplete="off"
+              required
+            >
+              <option value="">Select term</option>
+              <option value="1st Term 2025-2026">1st Term 2025-2026</option>
+              <option value="2nd Term 2025-2026">2nd Term 2025-2026</option>
+              <option value="3rd Term 2025-2026">3rd Term 2025-2026</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="remainingUnits"
+              >Remaining Number of Units <span class="required">*</span></label
+            >
+            <input
+              type="number"
+              id="remainingUnits"
+              name="remainingUnits"
+              autocomplete="off"
+              placeholder="21"
+              min="0"
+              required
+            />
+          </div>
+        </div>
+
+        <h2 class="form-section-title">Document Uploads</h2>
+
+        <div class="file-upload">
+          <label class="file-upload-label">Photo of Grades</label>
+          <label
+            for="gradesPhoto"
+            class="file-upload-area"
+            id="gradesUploadArea"
+          >
+            <div class="file-upload-icon material-icons">upload_file</div>
+            <div class="file-upload-text">Click to upload or drag and drop</div>
+            <div class="file-upload-filename" id="gradesFilename"></div>
+          </label>
+          <input
+            type="file"
+            id="gradesPhoto"
+            name="gradesPhoto"
+            accept="image/*,.pdf"
+          />
+        </div>
+
+        <div class="file-upload">
+          <label class="file-upload-label"
+            >Photo of Electronic Certificate of Matriculation (eCM)</label
+          >
+          <label for="ecmPhoto" class="file-upload-area" id="ecmUploadArea">
+            <div class="file-upload-icon material-icons">upload_file</div>
+            <div class="file-upload-text">Click to upload or drag and drop</div>
+            <div class="file-upload-filename" id="ecmFilename"></div>
+          </label>
+          <input
+            type="file"
+            id="ecmPhoto"
+            name="ecmPhoto"
+            accept="image/*,.pdf"
+          />
+        </div>
+
+        <h2 class="form-section-title">Engagement</h2>
+
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="attendedEvent"
+              autocomplete="off"
+              name="attendedEvent"
+            />
+            Have you recently attended a MU-DOST SA event?
+          </label>
+          <div class="conditional-field" id="eventNameField">
+            <div class="form-group">
+              <label for="eventName">If yes, which event?</label>
+              <input
+                type="text"
+                id="eventName"
+                name="eventName"
+                autocomplete="off"
+                placeholder="Enter event name"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="isMember" name="isMember" />
+            Are you a member of MU-DOST SA?
+          </label>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" id="downloadBlankBtn">
+            <span class="material-icons">download</span>
+            Download Blank PDF
+          </button>
+          <button type="button" class="btn btn-primary" id="generatePdfBtn">
+            <span class="material-icons">picture_as_pdf</span>
+            Generate Filled PDF
+          </button>
+        </div>
+
+        <p
+          style="
+            margin-top: 40px;
+            padding: 24px;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-light);
+            line-height: 1.8;
+            text-align: justify;
+            font-size: 1rem;
+          "
+        >
+          <strong
+            style="
+              display: block;
+              margin-bottom: 16px;
+              text-align: center;
+              font-size: 1.1rem;
+            "
+            >Submission Instructions</strong
+          >
+          After generating the filled SPEF, please email the document to
+          <a
+            href="mailto:mudost.internals@gmail.com"
+            style="
+              color: var(--accent-yellow);
+              text-decoration: none;
+              font-weight: 600;
+            "
+            onmouseover="this.style.textDecoration='underline'"
+            onmouseout="this.style.textDecoration='none'"
+            >mudost.internals@gmail.com</a
+          >
+          for signing. Then, email the signed SPEF to
+          <a
+            href="mailto:mucoordinator@sei.dost.gov.ph"
+            style="
+              color: var(--accent-yellow);
+              text-decoration: none;
+              font-weight: 600;
+            "
+            onmouseover="this.style.textDecoration='underline'"
+            onmouseout="this.style.textDecoration='none'"
+            >mucoordinator@sei.dost.gov.ph</a
+          >
+          with the subject line
+          <strong style="color: var(--accent-yellow)"
+            >[MERIT/RA 7687, BATCH 20XX] SURNAME SPEF - TERM X, 20XX-XX</strong
+          >
+          or you may submit it personally to the CSFA Office, South Building,
+          Ground Floor, Mapúa University - Intramuros to complete your
+          validation.
+        </p>
+      </form>
+    </div>
+
+    <footer>
+      <p>
+        &copy; 2025 Mapúa University DOST Scholars' Association. All rights
+        reserved.
+      </p>
+    </footer>
+
+    <script>
+      // Mobile navigation toggle
+      const navToggle = document.getElementById("navToggle");
+      const navLinks = document.getElementById("navLinks");
+
+      navToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        const icon = navToggle.querySelector(".material-icons");
+        icon.textContent = navLinks.classList.contains("open")
+          ? "close"
+          : "menu";
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !navToggle.contains(e.target) &&
+          !navLinks.contains(e.target) &&
+          navLinks.classList.contains("open")
+        ) {
+          navLinks.classList.remove("open");
+          navToggle.querySelector(".material-icons").textContent = "menu";
+        }
+      });
+
+      // File upload handling
+      function setupFileUpload(inputId, areaId, filenameId) {
+        const input = document.getElementById(inputId);
+        const area = document.getElementById(areaId);
+        const filename = document.getElementById(filenameId);
+
+        input.addEventListener("change", (e) => {
+          if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            filename.textContent = file.name;
+            area.classList.add("has-file");
+          }
+        });
+
+        // Drag and drop
+        area.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          area.style.borderColor = "var(--accent-yellow)";
+        });
+
+        area.addEventListener("dragleave", () => {
+          area.style.borderColor = "var(--border-color)";
+        });
+
+        area.addEventListener("drop", (e) => {
+          e.preventDefault();
+          area.style.borderColor = "var(--border-color)";
+          if (e.dataTransfer.files.length > 0) {
+            input.files = e.dataTransfer.files;
+            const file = e.dataTransfer.files[0];
+            filename.textContent = file.name;
+            area.classList.add("has-file");
+          }
+        });
+      }
+
+      setupFileUpload("gradesPhoto", "gradesUploadArea", "gradesFilename");
+      setupFileUpload("ecmPhoto", "ecmUploadArea", "ecmFilename");
+
+      // Clear file inputs on page load
+      window.addEventListener("load", () => {
+        const gradesInput = document.getElementById("gradesPhoto");
+        const ecmInput = document.getElementById("ecmPhoto");
+        const gradesFilename = document.getElementById("gradesFilename");
+        const ecmFilename = document.getElementById("ecmFilename");
+        const gradesArea = document.getElementById("gradesUploadArea");
+        const ecmArea = document.getElementById("ecmUploadArea");
+
+        // Clear inputs
+        gradesInput.value = "";
+        ecmInput.value = "";
+
+        // Clear filenames
+        gradesFilename.textContent = "";
+        ecmFilename.textContent = "";
+
+        // Remove has-file class
+        gradesArea.classList.remove("has-file");
+        ecmArea.classList.remove("has-file");
+      });
+
+      // Conditional fields
+      document
+        .getElementById("attendedEvent")
+        .addEventListener("change", (e) => {
+          const eventNameField = document.getElementById("eventNameField");
+          if (e.target.checked) {
+            eventNameField.classList.add("show");
+          } else {
+            eventNameField.classList.remove("show");
+            document.getElementById("eventName").value = "";
+          }
+        });
+
+      async function getPdfFieldNames() {
+        try {
+          const existingPdfBytes = await fetch(
+            "/spef/resources/SEMESTRAL-PROGRESS-AND-ENGAGEMENT-FORM.pdf"
+          ).then((res) => res.arrayBuffer());
+          const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+          const form = pdfDoc.getForm();
+
+          const fields = form.getFields();
+          console.log("=== PDF Form Fields ===");
+          fields.forEach((field) => {
+            const type = field.constructor.name;
+            const name = field.getName();
+            console.log(`Field: ${name} (Type: ${type})`);
+          });
+
+          // More detailed info
+          console.log("\n=== Text Fields ===");
+          const textFields = form
+            .getFields()
+            .filter((f) => f.constructor.name === "PDFTextField");
+          textFields.forEach((field) => {
+            console.log(field.getName());
+          });
+
+          console.log("\n=== Checkboxes ===");
+          const checkboxes = form
+            .getFields()
+            .filter((f) => f.constructor.name === "PDFCheckBox");
+          checkboxes.forEach((field) => {
+            console.log(field.getName());
+          });
+        } catch (error) {
+          console.error("Error reading PDF fields:", error);
+        }
+      }
+      // Download blank PDF
+      document
+        .getElementById("downloadBlankBtn")
+        .addEventListener("click", () => {
+          const link = document.createElement("a");
+          link.href =
+            "/spef/resources/SEMESTRAL-PROGRESS-AND-ENGAGEMENT-FORM.pdf";
+          link.download = "SPEF-Blank.pdf";
+          link.click();
+        });
+
+      // Generate filled PDF
+      document
+        .getElementById("generatePdfBtn")
+        .addEventListener("click", async () => {
+          // Validate required fields
+          const requiredFields = [
+            "name",
+            "studentNumber",
+            "contactNumber",
+            "email",
+            "programYear",
+            "spasId",
+            "landbankAccount",
+            "gwa",
+            "termApplied",
+            "remainingUnits",
+          ];
+
+          let isValid = true;
+          for (const fieldId of requiredFields) {
+            const field = document.getElementById(fieldId);
+            if (!field.value) {
+              isValid = false;
+              field.style.borderColor = "#f44336";
+              setTimeout(() => {
+                field.style.borderColor = "";
+              }, 2000);
+            }
+          }
+
+          if (!isValid) {
+            alert("Please fill in all required fields.");
+            return;
+          }
+
+          try {
+            // Load the blank PDF
+            const existingPdfBytes = await fetch(
+              "/spef/resources/SEMESTRAL-PROGRESS-AND-ENGAGEMENT-FORM.pdf"
+            ).then((res) => res.arrayBuffer());
+            const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+
+            // Get the form
+            const form = pdfDoc.getForm();
+
+            const fieldMapping = {
+              name: "Text-sWFPkW6MVz",
+              studentNumber: "Text-Rl_9Eev8b-",
+              programYear: "Text-_OSp2_2hmR",
+              spasID: "Text-IMvu3jb6Iz",
+              contactNumber: "Text-3ZzzkxzZJC",
+              email: "Text-cDGR4dWtYV",
+              landbankAccount: "Text-n-GCZaUYCT",
+              gwa: "Text-2SX5WH6w31",
+              term: "Text-48K59ov9j2",
+              remainingUnits: "Text-YjlYVVFmmi",
+              attendedEventYes: "CheckBox-SlajNAHa5-",
+              attendedEventNo: "CheckBox-4IN2QSKOEs",
+              isMemberYes: "CheckBox-epeHPuxIf5",
+              isMemberNo: "CheckBox-SjyQXS6sQ5",
+              attendedEvent: "Text-U0ji9bUEO3",
+              date: "Text-CxZSNyfoVE",
+              signature: "Signature-cZzrIdzL7V",
+            };
+            // Fill in the form fields (field names must match those in your PDF)
+            // Note: You'll need to adjust these field names to match your actual PDF
+            try {
+              form
+                .getTextField(fieldMapping.name)
+                .setText(document.getElementById("name").value);
+              form
+                .getTextField(fieldMapping.studentNumber)
+                .setText(document.getElementById("studentNumber").value);
+              form
+                .getTextField(fieldMapping.contactNumber)
+                .setText(document.getElementById("contactNumber").value);
+              form
+                .getTextField(fieldMapping.email)
+                .setText(document.getElementById("email").value);
+              form
+                .getTextField(fieldMapping.programYear)
+                .setText(document.getElementById("programYear").value);
+              form
+                .getTextField(fieldMapping.spasID)
+                .setText(document.getElementById("spasId").value);
+              form
+                .getTextField(fieldMapping.landbankAccount)
+                .setText(document.getElementById("landbankAccount").value);
+              form
+                .getTextField(fieldMapping.gwa)
+                .setText(document.getElementById("gwa").value);
+              form
+                .getTextField(fieldMapping.term)
+                .setText(document.getElementById("termApplied").value);
+              form
+                .getTextField(fieldMapping.remainingUnits)
+                .setText(document.getElementById("remainingUnits").value);
+              form
+                .getTextField(fieldMapping.date)
+                .setText(new Date().toLocaleDateString());
+
+              if (
+                document.getElementById("attendedEvent").checked &&
+                document.getElementById("eventName").value
+              ) {
+                form
+                  .getTextField(fieldMapping.attendedEvent)
+                  .setText(document.getElementById("eventName").value);
+              }
+
+              if (document.getElementById("attendedEvent").checked) {
+                form.getCheckBox(fieldMapping.attendedEventYes).check();
+              } else {
+                form.getCheckBox(fieldMapping.attendedEventNo).check();
+              }
+
+              if (document.getElementById("isMember").checked) {
+                form.getCheckBox(fieldMapping.isMemberYes).check();
+              } else {
+                form.getCheckBox(fieldMapping.isMemberNo).check();
+              }
+            } catch (e) {
+              console.warn("Some form fields could not be filled:", e);
+            }
+
+            // Load coordinates from JSON
+            const coordinatesResponse = await fetch(
+              "/spef/spefCoordinates.json"
+            );
+            const coordinates = await coordinatesResponse.json();
+
+            // Get all pages
+            const pages = pdfDoc.getPages();
+
+            // Embed grades photo
+            const gradesFile = document.getElementById("gradesPhoto").files[0];
+            if (gradesFile) {
+              try {
+                const gradesBytes = await gradesFile.arrayBuffer();
+                let gradesImage;
+
+                if (
+                  gradesFile.type === "image/jpeg" ||
+                  gradesFile.type === "image/jpg"
+                ) {
+                  gradesImage = await pdfDoc.embedJpg(gradesBytes);
+                } else if (gradesFile.type === "image/png") {
+                  gradesImage = await pdfDoc.embedPng(gradesBytes);
+                } else if (gradesFile.type === "application/pdf") {
+                  console.warn(
+                    "PDF files for grades not supported yet, skipping image embed"
+                  );
+                }
+
+                if (gradesImage) {
+                  const gradesPage = pages[coordinates.grades.page];
+                  const { height } = gradesPage.getSize();
+                  const gradesDims = gradesImage.scale(0.5); // Scale to 50%
+                  gradesPage.drawImage(gradesImage, {
+                    x: coordinates.grades.x,
+                    y: height - coordinates.grades.y - gradesDims.height, // Convert from top-left to bottom-left
+                    width: gradesDims.width,
+                    height: gradesDims.height,
+                  });
+                }
+              } catch (e) {
+                console.error("Error embedding grades photo:", e);
+              }
+            }
+
+            // Embed eCM photo
+            const ecmFile = document.getElementById("ecmPhoto").files[0];
+            if (ecmFile) {
+              try {
+                const ecmBytes = await ecmFile.arrayBuffer();
+                let ecmImage;
+
+                if (
+                  ecmFile.type === "image/jpeg" ||
+                  ecmFile.type === "image/jpg"
+                ) {
+                  ecmImage = await pdfDoc.embedJpg(ecmBytes);
+                } else if (ecmFile.type === "image/png") {
+                  ecmImage = await pdfDoc.embedPng(ecmBytes);
+                } else if (ecmFile.type === "application/pdf") {
+                  console.warn(
+                    "PDF files for eCM not supported yet, skipping image embed"
+                  );
+                }
+
+                if (ecmImage) {
+                  const ecmPage = pages[coordinates.ecm.page];
+                  const { height } = ecmPage.getSize();
+
+                  // Limit height to 226, maintain aspect ratio
+                  const maxHeight = 226;
+                  const originalDims = ecmImage.size();
+                  const scale = Math.min(maxHeight / originalDims.height, 1);
+                  const scaledWidth = originalDims.width * scale;
+                  const scaledHeight = originalDims.height * scale;
+
+                  ecmPage.drawImage(ecmImage, {
+                    x: coordinates.ecm.x,
+                    y: height - coordinates.ecm.y - scaledHeight, // Convert from top-left to bottom-left
+                    width: scaledWidth,
+                    height: scaledHeight,
+                  });
+                }
+              } catch (e) {
+                console.error("Error embedding eCM photo:", e);
+              }
+            }
+
+            // Save the PDF
+            const pdfBytes = await pdfDoc.save();
+
+            // Download the filled PDF
+            const blob = new Blob([pdfBytes], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `SPEF-${document
+              .getElementById("name")
+              .value.replace(/\s+/g, "_")}.pdf`;
+            link.click();
+          } catch (error) {
+            console.error("Error generating PDF:", error);
+            alert(
+              "Error generating PDF. Please ensure the PDF template has the correct form field names."
+            );
+          }
+        });
+    </script>
+  </body>
+</html>
