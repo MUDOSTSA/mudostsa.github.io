@@ -1057,6 +1057,27 @@
       );
       let uploadedSignedPdf = null;
 
+      // Field mapping for PDF form fields
+      const fieldMapping = {
+        name: "Text-sWFPkW6MVz",
+        studentNumber: "Text-Rl_9Eev8b-",
+        programYear: "Text-_OSp2_2hmR",
+        spasID: "Text-IMvu3jb6Iz",
+        contactNumber: "Text-3ZzzkxzZJC",
+        email: "Text-cDGR4dWtYV",
+        landbankAccount: "Text-n-GCZaUYCT",
+        gwa: "Text-2SX5WH6w31",
+        term: "Text-48K59ov9j2",
+        remainingUnits: "Text-YjlYVVFmmi",
+        attendedEventYes: "CheckBox-SlajNAHa5-",
+        attendedEventNo: "CheckBox-4IN2QSKOEs",
+        isMemberYes: "CheckBox-epeHPuxIf5",
+        isMemberNo: "CheckBox-SjyQXS6sQ5",
+        attendedEvent: "Text-U0ji9bUEO3",
+        date: "Text-CxZSNyfoVE",
+        signature: "Signature-cZzrIdzL7V",
+      };
+
       signedPdfInput.addEventListener("change", async (e) => {
         if (e.target.files.length > 0) {
           const file = e.target.files[0];
@@ -1071,23 +1092,6 @@
 
             // Extract form field values
             const form = pdfDoc.getForm();
-            const fieldMapping = {
-              name: "Text-sWFPkW6MVz",
-              studentNumber: "Text-Rl_9Eev8b-",
-              programYear: "Text-_OSp2_2hmR",
-              spasID: "Text-IMvu3jb6Iz",
-              contactNumber: "Text-3ZzzkxzZJC",
-              email: "Text-cDGR4dWtYV",
-              landbankAccount: "Text-n-GCZaUYCT",
-              gwa: "Text-2SX5WH6w31",
-              term: "Text-48K59ov9j2",
-              remainingUnits: "Text-YjlYVVFmmi",
-              attendedEventYes: "CheckBox-SlajNAHa5-",
-              attendedEventNo: "CheckBox-4IN2QSKOEs",
-              isMemberYes: "CheckBox-epeHPuxIf5",
-              isMemberNo: "CheckBox-SjyQXS6sQ5",
-              attendedEvent: "Text-U0ji9bUEO3",
-            };
 
             // Check PDF compatibility
             const pdfFields = form.getFields().map((f) => f.getName());
@@ -1341,25 +1345,6 @@
             // Get the form
             const form = pdfDoc.getForm();
 
-            const fieldMapping = {
-              name: "Text-sWFPkW6MVz",
-              studentNumber: "Text-Rl_9Eev8b-",
-              programYear: "Text-_OSp2_2hmR",
-              spasID: "Text-IMvu3jb6Iz",
-              contactNumber: "Text-3ZzzkxzZJC",
-              email: "Text-cDGR4dWtYV",
-              landbankAccount: "Text-n-GCZaUYCT",
-              gwa: "Text-2SX5WH6w31",
-              term: "Text-48K59ov9j2",
-              remainingUnits: "Text-YjlYVVFmmi",
-              attendedEventYes: "CheckBox-SlajNAHa5-",
-              attendedEventNo: "CheckBox-4IN2QSKOEs",
-              isMemberYes: "CheckBox-epeHPuxIf5",
-              isMemberNo: "CheckBox-SjyQXS6sQ5",
-              attendedEvent: "Text-U0ji9bUEO3",
-              date: "Text-CxZSNyfoVE",
-              signature: "Signature-cZzrIdzL7V",
-            };
             // Fill in the form fields (field names must match those in your PDF)
             // Note: You'll need to adjust these field names to match your actual PDF
             try {
