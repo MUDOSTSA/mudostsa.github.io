@@ -679,81 +679,59 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="name">Name <span class="required">*</span></label>
-            <input
-              type="text"
-              id="name"
-              placeholder="Juan Dela Cruz"
-              required
-            />
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Juan Dela Cruz" />
           </div>
 
           <div class="form-group">
-            <label for="studentNumber"
-              >Student Number <span class="required">*</span></label
-            >
+            <label for="studentNumber">Student Number</label>
             <input
               type="text"
               id="studentNumber"
               name="studentNumber"
               placeholder="2021XXXXXX"
-              required
             />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="contactNumber"
-              >Contact Number <span class="required">*</span></label
-            >
+            <label for="contactNumber">Contact Number</label>
             <input
               type="tel"
               id="contactNumber"
               name="tel"
               autocomplete="tel"
               placeholder="+63 912 345 6789"
-              required
             />
           </div>
 
           <div class="form-group">
-            <label for="email"
-              >Email Address <span class="required">*</span></label
-            >
+            <label for="email">Email Address</label>
             <input
               type="email"
               id="email"
               name="email"
               autocomplete="email"
               placeholder="jdelacruz@mymail.mapua.edu.ph"
-              required
             />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="programYear"
-              >Program & Year <span class="required">*</span></label
-            >
+            <label for="programYear">Program & Year</label>
             <input
               type="text"
               id="programYear"
               name="programYear"
               placeholder="CS - 3"
-              required
             />
           </div>
 
           <div class="form-group">
-            <label for="spasId">SPAS-ID <span class="required">*</span></label>
-            <input
-              type="text"
-              id="spasId"
-              placeholder="U-XXXX-XX-XXXXX"
-              required
-            />
+            <label for="spasId">SPAS-ID</label>
+            <input type="text" id="spasId" placeholder="U-XXXX-XX-XXXXX" />
           </div>
         </div>
 
@@ -797,15 +775,8 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="termApplied"
-              >Term Applied For <span class="required">*</span></label
-            >
-            <select
-              id="termApplied"
-              name="termApplied"
-              autocomplete="off"
-              required
-            >
+            <label for="termApplied">Term Applied For</label>
+            <select id="termApplied" name="termApplied" autocomplete="off">
               <option value="">Select term</option>
               <option value="1st Term 2025-2026">1st Term 2025-2026</option>
               <option value="2nd Term 2025-2026">2nd Term 2025-2026</option>
@@ -1257,34 +1228,6 @@
       document
         .getElementById("generatePdfBtn")
         .addEventListener("click", async () => {
-          // Validate required fields
-          const requiredFields = [
-            "name",
-            "studentNumber",
-            "contactNumber",
-            "email",
-            "programYear",
-            "spasId",
-            "termApplied",
-          ];
-
-          let isValid = true;
-          for (const fieldId of requiredFields) {
-            const field = document.getElementById(fieldId);
-            if (!field.value) {
-              isValid = false;
-              field.style.borderColor = "#f44336";
-              setTimeout(() => {
-                field.style.borderColor = "";
-              }, 2000);
-            }
-          }
-
-          if (!isValid) {
-            alert("Please fill in all required fields.");
-            return;
-          }
-
           // Show loading state
           const btn = document.getElementById("generatePdfBtn");
           const originalContent = btn.innerHTML;
