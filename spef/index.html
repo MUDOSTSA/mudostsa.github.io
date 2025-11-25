@@ -647,6 +647,42 @@
             </label>
             <input type="file" id="signedPdfUpload" accept="application/pdf" />
           </div>
+          <div
+            id="compatibilityMessage"
+            style="
+              margin-top: 16px;
+              padding: 16px;
+              border-radius: 8px;
+              display: none;
+              background: rgba(10, 25, 41, 0.6);
+              border: 1px solid var(--border-color);
+            "
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+              "
+            >
+              <span
+                class="material-icons"
+                id="compatibilityIcon"
+                style="font-size: 20px"
+              ></span>
+              <strong id="compatibilityTitle"></strong>
+            </div>
+            <p
+              id="compatibilityDescription"
+              style="
+                margin: 0;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                line-height: 1.6;
+              "
+            ></p>
+          </div>
         </div>
 
         <p
@@ -1011,13 +1047,22 @@
       const signedPdfInput = document.getElementById("signedPdfUpload");
       const signedPdfArea = document.getElementById("signedPdfUploadArea");
       const signedPdfFilename = document.getElementById("signedPdfFilename");
+      const compatibilityMessage = document.getElementById(
+        "compatibilityMessage"
+      );
+      const compatibilityIcon = document.getElementById("compatibilityIcon");
+      const compatibilityTitle = document.getElementById("compatibilityTitle");
+      const compatibilityDescription = document.getElementById(
+        "compatibilityDescription"
+      );
       let uploadedSignedPdf = null;
 
       signedPdfInput.addEventListener("change", async (e) => {
         if (e.target.files.length > 0) {
           const file = e.target.files[0];
-          signedPdfFilename.textContent = `Loading ${file.name}...`;
+          signedPdfFilename.textContent = file.name;
           signedPdfArea.classList.add("has-file");
+          compatibilityMessage.style.display = "none";
 
           try {
             const pdfBytes = await file.arrayBuffer();
@@ -1043,6 +1088,17 @@
               isMemberNo: "CheckBox-SjyQXS6sQ5",
               attendedEvent: "Text-U0ji9bUEO3",
             };
+
+            // Check PDF compatibility
+            const pdfFields = form.getFields().map((f) => f.getName());
+            const expectedFields = Object.values(fieldMapping);
+            const matchingFields = expectedFields.filter((field) =>
+              pdfFields.includes(field)
+            );
+            const isCompatible = matchingFields.length > 0;
+            const compatibilityPercent = Math.round(
+              (matchingFields.length / expectedFields.length) * 100
+            );
 
             // Pre-fill form fields from PDF
             try {
@@ -1128,16 +1184,49 @@
                 }
               } catch (e) {}
 
-              signedPdfFilename.textContent = `✓ Loaded and extracted values from ${file.name}`;
+              // Display compatibility message
+              compatibilityMessage.style.display = "block";
+
+              if (compatibilityPercent === 100) {
+                compatibilityIcon.textContent = "check_circle";
+                compatibilityIcon.style.color = "#4caf50";
+                compatibilityTitle.textContent = "Compatible PDF";
+                compatibilityTitle.style.color = "#4caf50";
+                compatibilityDescription.textContent = `All form fields were successfully extracted from ${file.name}. You can now edit the values and regenerate the PDF.`;
+              } else if (compatibilityPercent > 0) {
+                compatibilityIcon.textContent = "warning";
+                compatibilityIcon.style.color = "#ff9800";
+                compatibilityTitle.textContent = `Partially Compatible (${compatibilityPercent}%)`;
+                compatibilityTitle.style.color = "#ff9800";
+                compatibilityDescription.innerHTML = `Some form fields were extracted from ${file.name}. ${matchingFields.length} of ${expectedFields.length} expected fields found. Missing fields will remain empty.<br><br>For better compatibility, consider using a PDF editor like <a href="https://get.adobe.com/reader/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">Adobe Acrobat</a> or <a href="https://www.ilovepdf.com/edit-pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">iLovePDF</a> to manually edit your PDF.`;
+              } else {
+                compatibilityIcon.textContent = "error";
+                compatibilityIcon.style.color = "#f44336";
+                compatibilityTitle.textContent = "Incompatible PDF";
+                compatibilityTitle.style.color = "#f44336";
+                compatibilityDescription.innerHTML = `${file.name} does not contain the expected form fields. This PDF may not be a valid SPEF form. You can still use it as a template, but no values will be extracted.<br><br>To edit this PDF, please use a PDF editor like <a href="https://get.adobe.com/reader/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">Adobe Acrobat</a> or <a href="https://www.ilovepdf.com/edit-pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">iLovePDF</a> instead.`;
+              }
             } catch (e) {
               console.warn("Some fields could not be extracted:", e);
-              signedPdfFilename.textContent = `✓ ${file.name} (extraction incomplete)`;
+              compatibilityMessage.style.display = "block";
+              compatibilityIcon.textContent = "info";
+              compatibilityIcon.style.color = "#2196f3";
+              compatibilityTitle.textContent = "Extraction Incomplete";
+              compatibilityTitle.style.color = "#2196f3";
+              compatibilityDescription.innerHTML = `${file.name} was loaded but some fields could not be extracted. You can still use it as a template.<br><br>For manual editing, try using a PDF editor like <a href="https://get.adobe.com/reader/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">Adobe Acrobat</a> or <a href="https://www.ilovepdf.com/edit-pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">iLovePDF</a>.`;
             }
           } catch (error) {
             console.error("Error loading PDF:", error);
-            signedPdfFilename.textContent = `Error loading ${file.name}`;
+            signedPdfFilename.textContent = file.name;
             signedPdfArea.classList.remove("has-file");
             uploadedSignedPdf = null;
+
+            compatibilityMessage.style.display = "block";
+            compatibilityIcon.textContent = "error";
+            compatibilityIcon.style.color = "#f44336";
+            compatibilityTitle.textContent = "Error Loading PDF";
+            compatibilityTitle.style.color = "#f44336";
+            compatibilityDescription.innerHTML = `Failed to load ${file.name}. Please ensure the file is a valid PDF document.<br><br>If you need to edit your PDF, try using <a href="https://get.adobe.com/reader/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">Adobe Acrobat</a> or <a href="https://www.ilovepdf.com/edit-pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent-yellow); text-decoration: underline;">iLovePDF</a>.`;
           }
         }
       });
