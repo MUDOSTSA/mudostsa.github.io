@@ -1,12 +1,17 @@
 {
   "ecm": {
+    "page": 0,
+    "x": 45,
+    "y": 447
+  },
+  "grades": {
     "page": 1,
     "x": 45,
     "y": 164
   },
-  "grades": {
-    "page": 0,
-    "x": 45,
-    "y": 447
+  "signatureFieldBottomCenter": {
+    "page": 1,
+    "x": 202,
+    "y": 644
   }
 }
